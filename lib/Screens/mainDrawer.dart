@@ -1,4 +1,8 @@
-import './Screens/customersScreen.dart';
+import 'package:manage/Screens/ProductsScreen.dart';
+import 'package:manage/Screens/addProductsScreen.dart';
+import 'package:manage/Screens/addcustomer.dart';
+
+import 'customersScreen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -11,9 +15,6 @@ class MainDrawer extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 20,
-            ),
             BuildListTile(
               icon: Icons.home,
               text: 'HomePage',
@@ -22,10 +23,6 @@ class MainDrawer extends StatelessWidget {
                 Navigator.of(context).pushNamed('/');
               },
             ),
-            Divider(),
-            SizedBox(
-              height: 20,
-            ),
             BuildListTile(
               icon: Icons.person_search,
               text: 'Customers',
@@ -33,17 +30,29 @@ class MainDrawer extends StatelessWidget {
                 Navigator.of(context).pushNamed(CustomersScreen.routeName);
               },
             ),
-            Divider(),
-            SizedBox(
-              height: 20,
-            ),
             BuildListTile(icon: Icons.money, text: 'Transaction History'),
-            Divider(),
-            SizedBox(
-              height: 20,
+            BuildListTile(
+              icon: Icons.scatter_plot_rounded,
+              text: 'Products',
+              tapHandler: () {
+                Navigator.of(context).pushNamed(ProductsScreen.routeName);
+              },
+            ),
+            BuildListTile(
+              icon: Icons.person_add,
+              text: 'Add customer',
+              tapHandler: () {
+                Navigator.of(context).pushNamed(AddCustomerScreen.routeName);
+              },
+            ),
+            BuildListTile(
+              icon: Icons.add_box,
+              text: 'Add Products',
+              tapHandler: () {
+                Navigator.of(context).pushNamed(AddProductsScreen.routeName);
+              },
             ),
             BuildListTile(icon: Icons.notifications, text: 'Daily Check'),
-            Divider(),
           ],
         ),
       ),
@@ -58,11 +67,16 @@ class BuildListTile extends StatelessWidget {
   BuildListTile({this.icon, this.text, this.tapHandler});
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.only(left: 20, right: 50),
-      leading: Icon(icon),
-      trailing: Text(text),
-      onTap: tapHandler,
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.only(left: 20, right: 50),
+          leading: Icon(icon),
+          trailing: Text(text),
+          onTap: tapHandler,
+        ),
+        Divider(),
+      ],
     );
   }
 }

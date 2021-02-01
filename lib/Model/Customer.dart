@@ -1,4 +1,4 @@
-import './Product.dart';
+import 'package:manage/Model/CustomerProduct.dart';
 
 class Customer {
   String id;
@@ -9,15 +9,7 @@ class Customer {
   double paid;
   double due;
   DateTime schedulePay;
-  List<Product> products;
-  double _calculateTotalPrice(List<Product> products) {
-    double temp = 0;
-    for (int i = 0; i < products.length; i++) {
-      temp += products[i].totalAmount;
-    }
-    return temp;
-  }
-
+  List<CustomerProduct> products;
   Customer(
       {this.id,
       this.name,

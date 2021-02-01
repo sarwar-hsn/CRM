@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manage/Widgets/CustomerListView.dart';
-import 'package:manage/mainDrawer.dart';
+import 'package:manage/Screens/mainDrawer.dart';
 import '../Widgets/searchByName.dart';
 
 class CustomersScreen extends StatelessWidget {
@@ -15,7 +15,7 @@ class CustomersScreen extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
-                showSearch(context: context, delegate: SearchByName());
+                //showSearch(context: context, delegate: SearchByName());
               })
         ],
       ),

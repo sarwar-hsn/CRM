@@ -1,13 +1,13 @@
 class Product {
+  String id;
   String name;
-  double totalAmount;
   double unitPrice;
-  double unitPurchased;
   String unitName;
+  double availableAmount;
   Product(
-      {this.name,
+      {this.id,
+      this.name,
       this.unitPrice,
       this.unitName,
-      this.totalAmount,
-      this.unitPurchased});
+      this.availableAmount});
 }
