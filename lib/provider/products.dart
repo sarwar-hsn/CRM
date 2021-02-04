@@ -72,6 +72,12 @@ class Products with ChangeNotifier {
     return _products.where((element) => element.category == category).toList();
   }
 
+  List<String> getProductsList() {
+    return _products.map((item) {
+      return item.name;
+    }).toList();
+  }
+
   List<Product> get products {
     return [..._products];
   }

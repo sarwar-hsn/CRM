@@ -3,6 +3,11 @@ class CustomerProduct {
   String unitPurchased;
   String unitPrice;
   double totalAmount;
+  DateTime date;
   CustomerProduct(
-      {this.productName, this.totalAmount, this.unitPrice, this.unitPurchased});
+      {this.productName,
+      this.totalAmount,
+      this.unitPrice,
+      this.unitPurchased,
+      this.date});
 }

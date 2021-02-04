@@ -118,27 +118,25 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                           color: Colors.white70,
                           border: Border.all(color: Colors.black45, width: 1),
                           borderRadius: BorderRadius.circular(10)),
-                      child: DropdownButton(
-                          dropdownColor: Colors.white,
-                          underline: Container(
-                            height: 0,
-                            width: 0,
-                          ),
-                          isExpanded: true,
-                          value: dropDownValue,
-                          icon: Icon(Icons.arrow_drop_down),
-                          hint: Text('Select Category'),
-                          onChanged: (newValue) {
-                            setState(() {
-                              dropDownValue = newValue;
-                            });
-                          },
-                          items: categories.map((value) {
-                            return DropdownMenuItem(
-                              child: Text(value),
-                              value: value,
-                            );
-                          }).toList()),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                            dropdownColor: Colors.white,
+                            isExpanded: true,
+                            value: dropDownValue,
+                            icon: Icon(Icons.arrow_drop_down),
+                            hint: Text('Select Category'),
+                            onChanged: (newValue) {
+                              setState(() {
+                                dropDownValue = newValue;
+                              });
+                            },
+                            items: categories.map((value) {
+                              return DropdownMenuItem(
+                                child: Text(value),
+                                value: value,
+                              );
+                            }).toList()),
+                      ),
                     ),
                     (categories.isEmpty)
                         ? ErrorContainer(

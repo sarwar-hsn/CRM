@@ -4,18 +4,18 @@ class Customer {
   String id;
   String name;
   String mobile;
-  DateTime date;
   double total;
   double paid;
   double due;
+  String address;
   DateTime schedulePay;
   List<CustomerProduct> products;
   Customer(
       {this.id,
       this.name,
       this.mobile,
-      this.date,
       this.paid,
+      this.address,
       this.schedulePay,
       this.products,
       this.due,
