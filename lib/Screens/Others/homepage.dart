@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
         drawer: MainDrawer(),
         appBar: AppBar(
-          title: Text('Shohel\'s store'),
+          title: Text('Shohel Enterprise'),
           centerTitle: true,
         ),
         body: Center(

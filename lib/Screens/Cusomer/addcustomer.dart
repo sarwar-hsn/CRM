@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manage/Screens/mainDrawer.dart';
+import 'package:manage/Screens/Others/mainDrawer.dart';
 
 class AddCustomerScreen extends StatelessWidget {
   static const routeName = '/addCustomer';
@@ -9,7 +9,6 @@ class AddCustomerScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Add Customer'),
       ),
-      drawer: MainDrawer(),
       body: Center(
         child: Text('add customer'),
       ),

@@ -4,10 +4,12 @@ class Product {
   double unitPrice;
   String unitName;
   double availableAmount;
+  String category;
   Product(
       {this.id,
       this.name,
       this.unitPrice,
       this.unitName,
-      this.availableAmount});
+      this.availableAmount,
+      this.category});
 }

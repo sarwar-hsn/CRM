@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manage/Screens/customerDetailScreen.dart';
+import 'package:manage/Screens/Cusomer/customerDetailScreen.dart';
 import 'package:manage/Model/Customer.dart';
 import 'package:manage/provider/Customers.dart';
 import 'package:provider/provider.dart';

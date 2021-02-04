@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manage/Widgets/CustomerListView.dart';
-import 'package:manage/Screens/mainDrawer.dart';
-import '../Widgets/searchByName.dart';
+import 'package:manage/Screens/Others/mainDrawer.dart';
+import '../../Widgets/searchByName.dart';
 
 class CustomersScreen extends StatelessWidget {
   static const routeName = '/customerScreen';

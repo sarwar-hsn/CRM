@@ -1,8 +1,10 @@
-import 'package:manage/Screens/ProductsScreen.dart';
-import 'package:manage/Screens/addProductsScreen.dart';
-import 'package:manage/Screens/addcustomer.dart';
+import 'package:manage/Screens/Product/ProductsScreen.dart';
+import 'package:manage/Screens/Product/addCategories.dart';
+import 'package:manage/Screens/Product/addProductsScreen.dart';
+import 'package:manage/Screens/Cusomer/addcustomer.dart';
+import 'package:manage/Screens/Product/catergoryScreen.dart';
 
-import 'customersScreen.dart';
+import '../Cusomer/customersScreen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -20,22 +22,27 @@ class MainDrawer extends StatelessWidget {
               text: 'HomePage',
               tapHandler: () {
                 print('pressed');
-                Navigator.of(context).pushNamed('/');
+                Navigator.of(context).pushReplacementNamed('/');
               },
             ),
             BuildListTile(
               icon: Icons.person_search,
               text: 'Customers',
               tapHandler: () {
-                Navigator.of(context).pushNamed(CustomersScreen.routeName);
+                Navigator.of(context)
+                    .pushReplacementNamed(CustomersScreen.routeName);
               },
             ),
-            BuildListTile(icon: Icons.money, text: 'Transaction History'),
+            BuildListTile(
+              icon: Icons.money,
+              text: 'Transaction History',
+            ),
             BuildListTile(
               icon: Icons.scatter_plot_rounded,
               text: 'Products',
               tapHandler: () {
-                Navigator.of(context).pushNamed(ProductsScreen.routeName);
+                Navigator.of(context)
+                    .pushReplacementNamed(ProductsScreen.routeName);
               },
             ),
             BuildListTile(
@@ -50,6 +57,13 @@ class MainDrawer extends StatelessWidget {
               text: 'Add Products',
               tapHandler: () {
                 Navigator.of(context).pushNamed(AddProductsScreen.routeName);
+              },
+            ),
+            BuildListTile(
+              icon: Icons.add_box,
+              text: 'Add Categories',
+              tapHandler: () {
+                Navigator.of(context).pushNamed(AddCategoriesScreen.routeName);
               },
             ),
             BuildListTile(icon: Icons.notifications, text: 'Daily Check'),
