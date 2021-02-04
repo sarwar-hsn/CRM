@@ -12,12 +12,10 @@ class AddCategoriesScreen extends StatefulWidget {
 class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
   final _form = GlobalKey<FormState>();
   String category;
-  // void _saveForm(String category){
-
-  // }
 
   @override
   Widget build(BuildContext context) {
+    Products products = Provider.of<Products>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Category'),
@@ -52,8 +50,7 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
                       onPressed: () {
                         if (_form.currentState.validate()) {
                           _form.currentState.save();
-                          Provider.of<Products>(context, listen: false)
-                              .addCategory(category);
+                          products.addCategory(category);
                           _form.currentState.reset();
                         }
                       },

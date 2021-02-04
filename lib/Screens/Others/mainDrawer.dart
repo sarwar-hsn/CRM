@@ -42,7 +42,7 @@ class MainDrawer extends StatelessWidget {
               text: 'Products',
               tapHandler: () {
                 Navigator.of(context)
-                    .pushReplacementNamed(ProductsScreen.routeName);
+                    .pushReplacementNamed(CategoryScreen.routeName);
               },
             ),
             BuildListTile(

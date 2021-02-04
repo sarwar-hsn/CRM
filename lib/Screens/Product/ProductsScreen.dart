@@ -4,20 +4,18 @@ import 'package:manage/Widgets/SingleProduct.dart';
 import 'package:manage/provider/products.dart';
 import 'package:provider/provider.dart';
 
-import '../Others/mainDrawer.dart';
-
 class ProductsScreen extends StatelessWidget {
   static const routeName = '/productsScreen';
   @override
   Widget build(BuildContext context) {
     final category = ModalRoute.of(context).settings.arguments as String;
-    List<Product> products = Provider.of<Products>(context).products;
+    List<Product> products =
+        Provider.of<Products>(context).getProductsbyCategory(category);
     // Provider.of<Products>(context).getProductsbyCategory(category);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Products'),
+        title: Text(category),
       ),
-      drawer: MainDrawer(),
       body: (products.length == 0)
           ? Center(
               child: Text('No product in this Category yet'),
