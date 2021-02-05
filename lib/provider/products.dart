@@ -78,6 +78,13 @@ class Products with ChangeNotifier {
     }).toList();
   }
 
+  Product getProductByName(String name) {
+    for (int i = 0; i < _products.length; i++) {
+      if (_products[i].name == name) return _products[i];
+    }
+    return null;
+  }
+
   List<Product> get products {
     return [..._products];
   }

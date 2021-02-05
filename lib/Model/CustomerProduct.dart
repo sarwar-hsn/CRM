@@ -1,13 +1,17 @@
 class CustomerProduct {
+  String id;
   String productName;
-  String unitPurchased;
-  String unitPrice;
-  double totalAmount;
+  double unitPurchased;
+  double unitPrice;
+  String unitName;
+  double total;
   DateTime date;
   CustomerProduct(
-      {this.productName,
-      this.totalAmount,
+      {this.id,
+      this.productName,
+      this.total: 0,
       this.unitPrice,
       this.unitPurchased,
+      this.unitName,
       this.date});
 }
