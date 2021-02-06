@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manage/Model/Customer.dart';
+import 'package:manage/provider/Customers.dart';
+import 'package:provider/provider.dart';
 
 class CustomerDetailScreen extends StatefulWidget {
   static const routeName = '/CustomerDetailScreen';
@@ -12,8 +14,11 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final customerId = ModalRoute.of(context).settings.arguments as String;
+    Customer customer =
+        Provider.of<Customers>(context).getCustomerById(customerId);
     return Scaffold(
       appBar: AppBar(
+        title: Text('Customer Detail Screen'),
         actions: [
           IconButton(
               icon: Icon(Icons.arrow_back),
@@ -23,7 +28,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
         ],
       ),
       body: Center(
-        child: Text('dummy name'),
+        child: Text(customer.name),
       ),
     );
   }

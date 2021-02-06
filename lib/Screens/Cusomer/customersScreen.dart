@@ -10,7 +10,7 @@ class CustomersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customer Detail Screen'),
+        title: const Text('Customer OverView Screen'),
         actions: [
           IconButton(
               icon: Icon(Icons.search),

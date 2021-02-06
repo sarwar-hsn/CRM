@@ -16,7 +16,7 @@ class Customers with ChangeNotifier {
       schedulePay: DateTime.now(),
     ),
     Customer(
-      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
+      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.facebook.com'),
       name: 'mojid',
       mobile: '01763897425',
       total: 25000,
@@ -26,7 +26,7 @@ class Customers with ChangeNotifier {
       schedulePay: DateTime.now(),
     ),
     Customer(
-      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
+      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.twitter.com'),
       name: 'jabir',
       mobile: '01731251478',
       total: 360,
@@ -35,7 +35,7 @@ class Customers with ChangeNotifier {
       schedulePay: DateTime.now(),
     ),
     Customer(
-      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
+      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.duckduckgo.com'),
       name: 'sefa',
       mobile: '01789632541',
       total: 5000,
@@ -44,7 +44,7 @@ class Customers with ChangeNotifier {
       schedulePay: DateTime.now(),
     ),
     Customer(
-      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
+      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.instagram.com'),
       name: 'fatih',
       mobile: '01745654565',
       total: 1500,
@@ -60,6 +60,13 @@ class Customers with ChangeNotifier {
 
   List<Customer> get customers {
     return [..._customers];
+  }
+
+  Customer getCustomerById(String id) {
+    for (int i = 0; i < _customers.length; i++) {
+      if (_customers[i].id == id) return _customers[i];
+    }
+    return null;
   }
 
   void addCustomer(Customer newCustomer) {
