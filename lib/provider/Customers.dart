@@ -84,4 +84,8 @@ class Customers with ChangeNotifier {
   List<Customer> get customers {
     return [..._customers];
   }
+
+  void addCustomer(Customer newCustomer) {
+    _customers.add(newCustomer);
+  }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:manage/Model/Customer.dart';
 import 'package:manage/Model/CustomerProduct.dart';
 import 'package:manage/Model/Product.dart';
+import 'package:manage/Model/PurchasedDate.dart';
+import 'package:manage/provider/Customers.dart';
 import 'package:manage/provider/products.dart';
 import 'package:provider/provider.dart';
 
@@ -17,61 +20,143 @@ class AddCustomerScreen extends StatefulWidget {
 class _AddCustomerScreenState extends State<AddCustomerScreen> {
   DateTime scheduledDate;
   DateTime customerProductDate = DateTime.now();
-  DateTime customerDate = DateTime.now();
 
   List<CustomerProduct> pickedItems = [];
   CustomerProduct customerProduct = new CustomerProduct();
   Product dropDownValueProducts;
   String dropDownValueCategory;
 
+  Customer customer = new Customer();
+  PurchasedDate purchasedDate = new PurchasedDate();
+  List<PurchasedDate> dates = [];
+
   final _customerForm = GlobalKey<FormState>();
   final _customerProductForm = GlobalKey<FormState>();
 
+  AlertDialog getAlertDialog(Customers obj, Customer customer) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      title: Text('Customer Overview'),
+      content: Container(
+        height: 200,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('name: ' + customer.name),
+            Text('mobile: ' + customer.mobile),
+            Text('address: ' + customer.address),
+            Text('total: ' + customer.total.toString()),
+            Text('paid: ' + customer.paid.toString()),
+            Text(
+              'due: ' + customer.due.toString(),
+            )
+          ],
+        ),
+      ),
+      actions: [
+        ElevatedButton(
+            onPressed: () {
+              obj.addCustomer(customer);
+              Navigator.of(context).pop();
+            },
+            child: Text('confirm')),
+        ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('no'))
+      ],
+    );
+  }
+
+  void _saveCustomerForm(Customers obj) {
+    bool isValid = _customerForm.currentState.validate();
+    if (isValid) {
+      _customerForm.currentState.save();
+      customer.schedulePay = scheduledDate;
+      PurchasedDate tempPurchasedDate = new PurchasedDate(
+          date: customerProductDate, products: List.from(pickedItems));
+
+      //removing the pickedProducts
+      setState(() {
+        pickedItems.clear();
+      });
+
+      //get total
+      double total = 0;
+      print(tempPurchasedDate.date.toString());
+      for (int i = 0; i < tempPurchasedDate.products.length; i++) {
+        total += tempPurchasedDate.products[i].total;
+      }
+      //due
+      double due = total - customer.paid;
+
+      //calculate due
+      Customer tempCustomer = new Customer(
+        address: customer.address,
+        due: due,
+        mobile: customer.mobile,
+        name: customer.name,
+        paid: customer.paid,
+        schedulePay: scheduledDate,
+        total: total,
+      );
+      print('total: ' + tempCustomer.total.toString());
+      print('due: ' + tempCustomer.due.toString());
+      tempCustomer.products.add(tempPurchasedDate);
+
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return getAlertDialog(obj, tempCustomer);
+          });
+      obj.addCustomer(tempCustomer);
+      _customerForm.currentState.reset();
+    }
+  }
+
   Container dateContainer(
       BuildContext context, Function function, String text) {
+    Customers obj = Provider.of<Customers>(context);
     return Container(
       height: 100,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Row(
         children: [
-          Container(
-            padding: EdgeInsets.only(left: 10, right: 10),
-            height: 40,
-            alignment: Alignment.centerLeft,
-            width: double.infinity,
-            child: (scheduledDate == null)
-                ? Text(
-                    'no date selected',
-                    style: TextStyle(color: Colors.black45),
-                  )
-                : Text(
-                    DateFormat('dd-MM-yyyy').format(scheduledDate),
-                    textAlign: TextAlign.left,
-                  ),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white70,
-                border: Border.all(color: Colors.black54, width: 1)),
+          Expanded(
+            child: ElevatedButton(onPressed: function, child: Text(text)),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: ElevatedButton(onPressed: function, child: Text(text)),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        scheduledDate = null;
-                      });
-                    },
-                    child: Text('clear date')),
-              )
-            ],
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Container(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                height: 40,
+                alignment: Alignment.centerLeft,
+                child: (scheduledDate == null)
+                    ? Text(
+                        'no date selected',
+                        style: TextStyle(color: Colors.black45),
+                      )
+                    : Text(
+                        DateFormat('dd-MM-yyyy').format(scheduledDate),
+                        textAlign: TextAlign.left,
+                      ),
+                decoration: _decoration),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Expanded(
+            child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    scheduledDate = null;
+                  });
+                },
+                child: Text('clear date')),
           )
         ],
       ),
@@ -133,14 +218,12 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       customerProduct.productName = dropDownValueProducts.name;
       customerProduct.unitName = dropDownValueProducts.unitName;
 
-      print('name: ' + customerProduct.productName);
-      print('unit purchased: ' + customerProduct.unitPurchased.toString());
-      print('total: ' + customerProduct.total.toString());
       pickedItems.add(new CustomerProduct(
         productName: customerProduct.productName,
         unitName: customerProduct.unitName,
         total: customerProduct.total,
         unitPurchased: customerProduct.unitPurchased,
+        unitPrice: customerProduct.unitPrice,
       ));
       setState(() {
         dropDownValueCategory = null;
@@ -150,9 +233,19 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     }
   }
 
+  String _stringValidator(String value) {
+    if (value.isEmpty)
+      return 'empty field';
+    else if (double.tryParse(value) != null)
+      return 'numbers not allowed';
+    else
+      return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+    Customers customerObj = Provider.of<Customers>(context);
     Products obj = Provider.of<Products>(context);
     return Scaffold(
       appBar: AppBar(
@@ -169,18 +262,42 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
               child: ListView(children: [
                 TextFormField(
                   decoration: getInputDesign('name'),
+                  initialValue: 'sarwar',
+                  validator: (value) {
+                    String temp = _stringValidator(value);
+                    if (temp == null) {
+                      customer.name = value;
+                    }
+                    return temp;
+                  },
                 ),
                 SizedBox(
                   height: 15,
                 ),
                 TextFormField(
                   decoration: getInputDesign('mobile'),
+                  initialValue: '01733202514',
+                  validator: (value) {
+                    if (int.tryParse(value) != null && value.length == 11) {
+                      customer.mobile = value;
+                      return null;
+                    }
+                    return 'Invalid number';
+                  },
                 ),
                 SizedBox(
                   height: 15,
                 ),
                 TextFormField(
                   decoration: getInputDesign('address'),
+                  initialValue: 'test',
+                  validator: (value) {
+                    String temp = _stringValidator(value);
+                    if (temp == null) {
+                      customer.address = value;
+                    }
+                    return temp;
+                  },
                 ),
                 SizedBox(
                   height: 15,
@@ -341,20 +458,23 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 SizedBox(
                   height: 10,
                 ),
-
                 TextFormField(
+                  initialValue: '100',
                   decoration: getInputDesign('paid amount'),
-                ),
-
-                SizedBox(
-                  height: 15,
+                  validator: (value) {
+                    String temp = _doubleValidator(value);
+                    if (temp == null) {
+                      customer.paid = double.parse(value);
+                    }
+                    return temp;
+                  },
                 ),
                 dateContainer(context, _pickDateforSchedule, 'scheduled date'),
-                SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton(onPressed: () {}, child: Text('SAVE CUSTOMER'))
-                //ElevatedButton(onPressed: _pickDate, child: Text('Pick a date'))
+                ElevatedButton(
+                    onPressed: () {
+                      _saveCustomerForm(customerObj);
+                    },
+                    child: Text('SAVE CUSTOMER'))
               ]),
             ),
           ),
@@ -417,12 +537,14 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                       ? Text('Product name: _')
                                       : Text('Product name: ' +
                                           pickedItems[index].productName),
-                                  Text('purchased amount: ' +
+                                  Text('purchased unit: ' +
                                       pickedItems[index]
                                           .unitPurchased
                                           .toString() +
                                       ' ' +
                                       pickedItems[index].unitName),
+                                  Text('unit price: ' +
+                                      pickedItems[index].unitPrice.toString()),
                                   Text('price: ' +
                                       pickedItems[index].total.toString()),
                                   Row(

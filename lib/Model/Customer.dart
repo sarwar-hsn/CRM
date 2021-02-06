@@ -1,4 +1,5 @@
 import 'package:manage/Model/CustomerProduct.dart';
+import 'package:manage/Model/PurchasedDate.dart';
 
 class Customer {
   String id;
@@ -9,7 +10,7 @@ class Customer {
   double due;
   String address;
   DateTime schedulePay;
-  List<CustomerProduct> products;
+  List<PurchasedDate> products = [];
   Customer(
       {this.id,
       this.name,
@@ -17,7 +18,6 @@ class Customer {
       this.paid,
       this.address,
       this.schedulePay,
-      this.products,
       this.due,
       this.total});
 }
