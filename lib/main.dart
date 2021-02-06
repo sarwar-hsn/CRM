@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manage/Screens/EditScreens.dart/EditProduct.dart';
 import 'package:manage/Screens/Product/addCategories.dart';
 import 'package:manage/Screens/Product/addProductsScreen.dart';
 import 'package:manage/Screens/Cusomer/addcustomer.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
           CustomerDetailScreen.routeName: (context) => CustomerDetailScreen(),
           AddCategoriesScreen.routeName: (context) => AddCategoriesScreen(),
           CategoryScreen.routeName: (context) => CategoryScreen(),
+          EditProductScreen.routeName: (context) => EditProductScreen()
         },
       ),
     );

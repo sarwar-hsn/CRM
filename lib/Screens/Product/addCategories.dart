@@ -50,8 +50,25 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
                       onPressed: () {
                         if (_form.currentState.validate()) {
                           _form.currentState.save();
-                          products.addCategory(category);
-                          _form.currentState.reset();
+                          if (products.checkDuplicate(category) == false) {
+                            products.addCategory(category);
+                            _form.currentState.reset();
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: Text('Category already Present'),
+                                    actions: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('ok'))
+                                    ],
+                                  );
+                                });
+                          }
                         }
                       },
                       child: Text('ADD'))

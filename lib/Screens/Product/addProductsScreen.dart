@@ -4,6 +4,8 @@ import 'package:manage/Model/Product.dart';
 import 'package:manage/Widgets/errorContainer.dart';
 import 'package:provider/provider.dart';
 import '../../provider/products.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 
 class AddProductsScreen extends StatefulWidget {
   static const routeName = '/addProductsScreen';
@@ -48,14 +50,13 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
         print(temp.unitName);
         print(temp.availableAmount);
         temp.category = dropDownValue;
+        temp.id = Uuid().v4();
         obj.addProduct(temp);
-
         setState(() {
           dropDownValue = null;
           errorContainerHeight = 0;
           errorText = '';
         });
-        //Provider.of<Products>(context, listen: false).addProduct(temp);
         _form.currentState.reset();
       }
     }

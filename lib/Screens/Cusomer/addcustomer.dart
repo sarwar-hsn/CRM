@@ -7,6 +7,8 @@ import 'package:manage/Model/PurchasedDate.dart';
 import 'package:manage/provider/Customers.dart';
 import 'package:manage/provider/products.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 
 import '../../Model/CustomerProduct.dart';
 
@@ -58,6 +60,12 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
         ElevatedButton(
             onPressed: () {
               obj.addCustomer(customer);
+              _customerForm.currentState.reset();
+              setState(() {
+                scheduledDate = null;
+                customerProductDate = DateTime.now();
+                pickedItems.clear();
+              });
               Navigator.of(context).pop();
             },
             child: Text('confirm')),
@@ -79,9 +87,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
           date: customerProductDate, products: List.from(pickedItems));
 
       //removing the pickedProducts
-      setState(() {
-        pickedItems.clear();
-      });
+      // setState(() {
+      //   pickedItems.clear();
+      // });
 
       //get total
       double total = 0;
@@ -105,6 +113,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       print('total: ' + tempCustomer.total.toString());
       print('due: ' + tempCustomer.due.toString());
       tempCustomer.products.add(tempPurchasedDate);
+      tempCustomer.id = Uuid().v1();
 
       showDialog(
           barrierDismissible: false,
@@ -112,8 +121,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
           builder: (context) {
             return getAlertDialog(obj, tempCustomer);
           });
-      obj.addCustomer(tempCustomer);
-      _customerForm.currentState.reset();
     }
   }
 
@@ -219,6 +226,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       customerProduct.unitName = dropDownValueProducts.unitName;
 
       pickedItems.add(new CustomerProduct(
+        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
         productName: customerProduct.productName,
         unitName: customerProduct.unitName,
         total: customerProduct.total,
@@ -262,7 +270,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
               child: ListView(children: [
                 TextFormField(
                   decoration: getInputDesign('name'),
-                  initialValue: 'sarwar',
                   validator: (value) {
                     String temp = _stringValidator(value);
                     if (temp == null) {
@@ -276,7 +283,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 ),
                 TextFormField(
                   decoration: getInputDesign('mobile'),
-                  initialValue: '01733202514',
                   validator: (value) {
                     if (int.tryParse(value) != null && value.length == 11) {
                       customer.mobile = value;
@@ -290,7 +296,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 ),
                 TextFormField(
                   decoration: getInputDesign('address'),
-                  initialValue: 'test',
                   validator: (value) {
                     String temp = _stringValidator(value);
                     if (temp == null) {
@@ -459,7 +464,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   height: 10,
                 ),
                 TextFormField(
-                  initialValue: '100',
                   decoration: getInputDesign('paid amount'),
                   validator: (value) {
                     String temp = _doubleValidator(value);
