@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../Model/Product.dart';
 import 'package:uuid/uuid.dart';
-import 'package:uuid/uuid_util.dart';
 
 class Products with ChangeNotifier {
   List<Product> _products = [
@@ -27,28 +26,28 @@ class Products with ChangeNotifier {
         category: 'balu',
         availableAmount: 5000),
     Product(
-        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
+        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.facebook.com'),
         name: 'goru',
         unitName: 'piece',
         unitPrice: 10000,
         category: 'animal',
         availableAmount: 10),
     Product(
-        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
+        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.twitter.com'),
         name: 'murgi',
         unitName: 'kg',
         unitPrice: 350,
         category: 'animal',
         availableAmount: 500),
     Product(
-        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
+        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.instagram.com'),
         name: 'hash',
         unitName: 'kg',
         unitPrice: 50,
         category: 'animal',
         availableAmount: 200),
     Product(
-        id: DateTime.now().toString(),
+        id: Uuid().v1(),
         name: 'vhera',
         unitName: 'piece',
         unitPrice: 2000,
@@ -68,6 +67,25 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateProduct(Product temp, int index) {
+    _products.removeAt(index);
+    _products.add(new Product(
+        availableAmount: temp.availableAmount,
+        category: temp.category,
+        id: temp.id,
+        name: temp.name,
+        unitName: temp.unitName,
+        unitPrice: temp.unitPrice));
+    notifyListeners();
+  }
+
+  Product getProductById(String id) {
+    for (int i = 0; i < _products.length; i++) {
+      if (_products[i].id == id) return _products[i];
+    }
+    return null;
+  }
+
   List<String> get categories {
     return [..._categories];
   }
@@ -81,6 +99,17 @@ class Products with ChangeNotifier {
 
   void addProduct(Product obj) {
     _products.add(obj);
+    notifyListeners();
+  }
+
+  int getIndexById(String id) {
+    for (int i = 0; i < _products.length; i++) {
+      if (_products[i].id == id) return i;
+    }
+    return -1;
+  }
+
+  void callListener() {
     notifyListeners();
   }
 

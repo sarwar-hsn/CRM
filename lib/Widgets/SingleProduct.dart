@@ -29,8 +29,9 @@ class SingleProduct extends StatelessWidget {
                   IconButton(
                     tooltip: 'Edit this Product',
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushNamed(EditProductScreen.routeName);
+                      Navigator.of(context).pushNamed(
+                          EditProductScreen.routeName,
+                          arguments: product.id);
                     },
                     icon: Icon(Icons.edit),
                     color: Colors.white,
