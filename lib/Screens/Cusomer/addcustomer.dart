@@ -5,6 +5,8 @@ import 'package:manage/Model/Product.dart';
 import 'package:manage/provider/products.dart';
 import 'package:provider/provider.dart';
 
+import '../../Model/CustomerProduct.dart';
+
 class AddCustomerScreen extends StatefulWidget {
   static const routeName = '/addCustomer';
 
@@ -16,8 +18,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   DateTime scheduledDate;
   DateTime customerProductDate = DateTime.now();
   DateTime customerDate = DateTime.now();
-  CustomerProduct customerProduct = new CustomerProduct();
+
   List<CustomerProduct> pickedItems = [];
+  CustomerProduct customerProduct = new CustomerProduct();
   Product dropDownValueProducts;
   String dropDownValueCategory;
 
@@ -123,16 +126,23 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
   void _saveCustomerProduct() {
     bool isValid = _customerProductForm.currentState.validate();
-    if (isValid) {
+    if (isValid && dropDownValueProducts != null) {
       _customerProductForm.currentState.save();
       customerProduct.total =
           customerProduct.unitPrice * customerProduct.unitPurchased;
       customerProduct.productName = dropDownValueProducts.name;
       customerProduct.unitName = dropDownValueProducts.unitName;
-      customerProduct.date = customerProductDate;
 
+      print('name: ' + customerProduct.productName);
+      print('unit purchased: ' + customerProduct.unitPurchased.toString());
+      print('total: ' + customerProduct.total.toString());
+      pickedItems.add(new CustomerProduct(
+        productName: customerProduct.productName,
+        unitName: customerProduct.unitName,
+        total: customerProduct.total,
+        unitPurchased: customerProduct.unitPurchased,
+      ));
       setState(() {
-        pickedItems.add(customerProduct);
         dropDownValueCategory = null;
         dropDownValueProducts = null;
       });
@@ -179,6 +189,31 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   key: _customerProductForm,
                   child: Column(
                     children: [
+                      Row(
+                        children: [
+                          ElevatedButton(
+                              onPressed: (pickedItems.isEmpty)
+                                  ? _pickDateforCustomerProduct
+                                  : null,
+                              child: Text(
+                                  'Selecet a date for prducts ( default is today ) :')),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.all(8),
+                              width: 150,
+                              decoration: _decoration,
+                              child: Text(DateFormat('dd-MM-yyyy')
+                                  .format(customerProductDate)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Row(
                         children: <Widget>[
                           Expanded(
@@ -293,33 +328,11 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          IconButton(
-                            tooltip:
-                                'select a date for this product. default is today',
-                            icon: Icon(Icons.calendar_today),
-                            onPressed: _pickDateforCustomerProduct,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            width: 150,
-                            decoration: _decoration,
-                            child: Text(DateFormat('dd-MM-yyyy')
-                                .format(customerProductDate)),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
                           ElevatedButton(
                               onPressed: () {
                                 _saveCustomerProduct();
                               },
                               child: Text('ADD PRODUCT')),
-                          SizedBox(
-                            width: 10,
-                          ),
                         ],
                       )
                     ],
@@ -348,92 +361,107 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
           SizedBox(
             width: mediaQuery.size.width * .1,
           ),
-          inputProductsContainer(context, pickedItems)
+          inputProductsContainer()
         ],
       ),
     );
   }
-}
 
-Stack inputProductsContainer(
-    BuildContext context, List<CustomerProduct> items) {
-  final mediaQuery = MediaQuery.of(context);
-  double _totalPrice = 0;
-  for (int i = 0; i < items.length; i++) {
-    _totalPrice += items[i].total;
+  Stack inputProductsContainer() {
+    final mediaQuery = MediaQuery.of(context);
+    double _totalPrice = 0;
+    for (int i = 0; i < pickedItems.length; i++) {
+      _totalPrice += pickedItems[i].total;
+    }
+    return Stack(
+      alignment: AlignmentDirectional.bottomCenter,
+      children: [
+        Container(
+          color: Colors.red[50],
+          width: mediaQuery.size.width * .3,
+          height: mediaQuery.size.height * .9,
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Text(
+                'List of added products',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: mediaQuery.size.height * .02,
+              ),
+              (pickedItems.length == 0)
+                  ? Text('no items yet')
+                  : Expanded(
+                      child: ListView.builder(
+                          itemCount: pickedItems.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == 0) {
+                              return Card(
+                                child: Text('Date : ' +
+                                    DateFormat('dd-MM-yyyyy')
+                                        .format(customerProductDate)),
+                              );
+                            }
+                            index -= 1;
+                            return Card(
+                                child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  (pickedItems[index].productName == null)
+                                      ? Text('Product name: _')
+                                      : Text('Product name: ' +
+                                          pickedItems[index].productName),
+                                  Text('purchased amount: ' +
+                                      pickedItems[index]
+                                          .unitPurchased
+                                          .toString() +
+                                      ' ' +
+                                      pickedItems[index].unitName),
+                                  Text('price: ' +
+                                      pickedItems[index].total.toString()),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              pickedItems.removeAt(index);
+                                            });
+                                          },
+                                          child: Text('Remove')),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ));
+                          }),
+                    )
+            ],
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.black45, width: 1),
+              borderRadius: BorderRadius.circular(10)),
+          width: mediaQuery.size.width * .3,
+          height: 40,
+          alignment: Alignment.center,
+          child: Text(
+            'Total Cost : ' + _totalPrice.toString() + '   Taka',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
   }
-  return Stack(
-    alignment: AlignmentDirectional.bottomCenter,
-    children: [
-      Container(
-        color: Colors.red[50],
-        width: mediaQuery.size.width * .3,
-        height: mediaQuery.size.height * .9,
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Text(
-              'List of added products',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: mediaQuery.size.height * .02,
-            ),
-            (items.length == 0)
-                ? Text('no items yet')
-                : Expanded(
-                    child: ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                              child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                (items[index].productName == null)
-                                    ? Text('Product name: _')
-                                    : Text('Product name: ' +
-                                        items[index].productName),
-                                Text('purchased amount: ' +
-                                    items[index].unitPurchased.toString() +
-                                    ' ' +
-                                    items[index].unitName),
-                                Text('price: ' + items[index].total.toString()),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                        onPressed: () {},
-                                        child: Text('Remove')),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ));
-                        }),
-                  )
-          ],
-        ),
-      ),
-      Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.black45, width: 1),
-            borderRadius: BorderRadius.circular(10)),
-        width: mediaQuery.size.width * .3,
-        height: 40,
-        alignment: Alignment.center,
-        child: Text(
-          'Total Cost : ' + _totalPrice.toString() + '   Taka',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-    ],
-  );
 }
 
 InputDecoration getInputDesign(String hintText) {
