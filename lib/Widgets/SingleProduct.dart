@@ -7,8 +7,13 @@ import 'package:provider/provider.dart';
 class SingleProduct extends StatelessWidget {
   final Product product;
   SingleProduct({this.product});
+  _deleteHandler(Products obj) {
+    obj.deleteProduct(id: product.id);
+  }
+
   @override
   Widget build(BuildContext context) {
+    Products obj = Provider.of<Products>(context);
     return Card(
       color: Colors.blueGrey,
       elevation: 10,
@@ -34,6 +39,15 @@ class SingleProduct extends StatelessWidget {
                           arguments: product.id);
                     },
                     icon: Icon(Icons.edit),
+                    color: Colors.white,
+                    iconSize: 20,
+                  ),
+                  IconButton(
+                    tooltip: 'Delete this Product',
+                    onPressed: () {
+                      _deleteHandler(obj);
+                    },
+                    icon: Icon(Icons.delete),
                     color: Colors.white,
                     iconSize: 20,
                   )

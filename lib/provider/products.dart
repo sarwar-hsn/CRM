@@ -79,6 +79,14 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteProduct({String id}) {
+    int index = getIndexById(id);
+    if (index != -1) {
+      _products.removeAt(index);
+    }
+    notifyListeners();
+  }
+
   Product getProductById(String id) {
     for (int i = 0; i < _products.length; i++) {
       if (_products[i].id == id) return _products[i];

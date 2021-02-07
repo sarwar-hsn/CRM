@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:manage/Model/CustomerProduct.dart';
+import 'package:manage/Model/PurchasedDate.dart';
 import '../Model/Customer.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
@@ -13,6 +15,30 @@ class Customers with ChangeNotifier {
       paid: 300,
       due: 700,
       address: 'birampur',
+      products: [
+        PurchasedDate(
+            date: DateTime.now().subtract(Duration(days: 5)),
+            products: [
+              CustomerProduct(
+                  id: DateTime.now().toString(),
+                  productName: 'test',
+                  total: 500,
+                  unitName: 'test',
+                  unitPrice: 300,
+                  unitPurchased: 300)
+            ]),
+        PurchasedDate(
+            date: DateTime.now().subtract(Duration(days: 4)),
+            products: [
+              CustomerProduct(
+                  id: DateTime.now().toString() + '2514',
+                  productName: 'test1',
+                  total: 5000,
+                  unitName: 'test1',
+                  unitPrice: 3000,
+                  unitPurchased: 3000)
+            ])
+      ],
       schedulePay: DateTime.now(),
     ),
     Customer(

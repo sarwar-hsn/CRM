@@ -19,5 +19,6 @@ class Customer {
       this.address,
       this.schedulePay,
       this.due,
-      this.total});
+      this.total,
+      this.products});
 }
