@@ -67,6 +67,7 @@ class _CustomerListViewState extends State<CustomerListView> {
                         padding: EdgeInsets.only(right: 140),
                         icon: Icon(Icons.arrow_right),
                         onPressed: () {
+                          print(customers[index].id);
                           Navigator.of(context).pushNamed(
                               CustomerDetailScreen.routeName,
                               arguments: customers[index].id);

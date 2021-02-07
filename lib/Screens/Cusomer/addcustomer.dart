@@ -85,13 +85,6 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       customer.schedulePay = scheduledDate;
       PurchasedDate tempPurchasedDate = new PurchasedDate(
           date: customerProductDate, products: List.from(pickedItems));
-
-      //removing the pickedProducts
-      // setState(() {
-      //   pickedItems.clear();
-      // });
-
-      //get total
       double total = 0;
       print(tempPurchasedDate.date.toString());
       for (int i = 0; i < tempPurchasedDate.products.length; i++) {
@@ -271,11 +264,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 TextFormField(
                   decoration: getInputDesign('name'),
                   validator: (value) {
-                    String temp = _stringValidator(value);
-                    if (temp == null) {
-                      customer.name = value;
-                    }
-                    return temp;
+                    return _stringValidator(value);
+                  },
+                  onSaved: (value) {
+                    customer.name = value;
                   },
                 ),
                 SizedBox(
@@ -285,10 +277,12 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   decoration: getInputDesign('mobile'),
                   validator: (value) {
                     if (int.tryParse(value) != null && value.length == 11) {
-                      customer.mobile = value;
                       return null;
                     }
                     return 'Invalid number';
+                  },
+                  onSaved: (value) {
+                    customer.mobile = value;
                   },
                 ),
                 SizedBox(
@@ -297,11 +291,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 TextFormField(
                   decoration: getInputDesign('address'),
                   validator: (value) {
-                    String temp = _stringValidator(value);
-                    if (temp == null) {
-                      customer.address = value;
-                    }
-                    return temp;
+                    return _stringValidator(value);
+                  },
+                  onSaved: (value) {
+                    customer.address = value;
                   },
                 ),
                 SizedBox(
@@ -407,12 +400,11 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                             child: TextFormField(
                               decoration: getInputDesign('amount...'),
                               validator: (value) {
-                                String temp = _doubleValidator(value);
-                                if (temp == null) {
-                                  customerProduct.unitPurchased =
-                                      double.parse(value);
-                                }
-                                return temp;
+                                return _doubleValidator(value);
+                              },
+                              onSaved: (value) {
+                                customerProduct.unitPurchased =
+                                    double.parse(value);
                               },
                             ),
                           ),

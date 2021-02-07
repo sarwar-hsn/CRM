@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:manage/Model/Customer.dart';
 import 'package:manage/Model/CustomerProduct.dart';
 import 'package:manage/Model/PurchasedDate.dart';
+import 'package:manage/Screens/EditScreens.dart/editCustomer.dart';
+import 'package:manage/Screens/EditScreens.dart/updatepayment.dart';
 import 'package:manage/Widgets/CustomerProductDetail.dart';
 import 'package:manage/provider/Customers.dart';
 import 'package:provider/provider.dart';
@@ -15,9 +17,11 @@ class CustomerDetailScreen extends StatefulWidget {
 }
 
 class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
+  double amount = 0;
+
   @override
   Widget build(BuildContext context) {
-    final customerId = ModalRoute.of(context).settings.arguments as String;
+    final customerId = ModalRoute.of(context).settings.arguments;
     Customer customer =
         Provider.of<Customers>(context).getCustomerById(customerId);
     final mediaQuery = MediaQuery.of(context).size;
@@ -33,84 +37,119 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
           ],
         ),
         body: SafeArea(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: [
-                Container(
-                  height:
-                      mediaQuery.height * .5 - AppBar().preferredSize.height,
-                  child: Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Row(
+          child: (customer == null)
+              ? Text('something went wrong')
+              : Container(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                    Colors.deepPurple.withOpacity(.08),
+                    Colors.deepPurpleAccent.withOpacity(.08)
+                  ])),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border:
+                                  Border.all(color: Colors.black12, width: 1),
+                              color: Colors.white),
+                          height: mediaQuery.height * .5 -
+                              AppBar().preferredSize.height,
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              ElevatedButton(
-                                child: Text('Add Payment'),
-                                onPressed: () {},
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ElevatedButton(
+                                        child: Text('Update Payment'),
+                                        onPressed: () {
+                                          Navigator.of(context).pushNamed(
+                                              UpdatePayment.routeName,
+                                              arguments: customer);
+                                        },
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      ElevatedButton(
+                                        child: Text('Edit Customer'),
+                                        onPressed: () {
+                                          Navigator.of(context).pushNamed(
+                                              EditCustomerScreen.routeName,
+                                              arguments: customer);
+                                        },
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      ElevatedButton(
+                                          child: Text('Add Product'),
+                                          onPressed: () {}),
+                                    ]),
                               ),
-                              ElevatedButton(
-                                child: Text('Edit Customer'),
-                                onPressed: () {},
-                              ),
-                              ElevatedButton(
-                                  child: Text('Add Product'), onPressed: () {}),
-                            ]),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                Text('Name : ' + customer.name),
-                                Text('Mobile : ' + customer.mobile),
-                                Text('Address : ' + customer.address)
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text('Total : ' + customer.total.toString()),
-                                Text('Paid : ' + customer.paid.toString()),
-                                Text('Due : ' + customer.due.toString())
-                              ],
-                            )
-                          ],
-                        )
-                      ],
-                    ),
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 300,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Name : ' + customer.name),
+                                          Text('Mobile : ' + customer.mobile),
+                                          Text('Address : ' + customer.address),
+                                          (customer.schedulePay == null)
+                                              ? Text(
+                                                  'Schedule Payment Day : ----')
+                                              : Text(
+                                                  'Scheduled payment Day : ' +
+                                                      DateFormat('dd-MM-yyyy')
+                                                          .format(customer
+                                                              .schedulePay))
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 300,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Total : ' +
+                                              customer.total.toString()),
+                                          Text('Paid : ' +
+                                              customer.paid.toString()),
+                                          Text('Due : ' +
+                                              customer.due.toString())
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      CustomerProductDetail(
+                        customer: customer,
+                        mediaQuery: mediaQuery,
+                      )
+                    ],
                   ),
                 ),
-                CustomerProductDetail(
-                  customer: customer,
-                  mediaQuery: mediaQuery,
-                )
-              ],
-            ),
-          ),
         ));
   }
-}
-
-AlertDialog getProductsDetail(
-    CustomerProduct productObj, BuildContext context) {
-  return AlertDialog(
-    actions: [
-      ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('okay'))
-    ],
-    content: Row(
-      children: [
-        Text(productObj.productName),
-        Text(productObj.unitPurchased.toString()),
-        Text(productObj.unitPrice.toString() + ' / ' + productObj.unitName),
-        Text(productObj.total.toString())
-      ],
-    ),
-  );
 }

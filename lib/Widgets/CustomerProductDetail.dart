@@ -21,8 +21,6 @@ class CustomerProductDetail extends StatelessWidget {
                   itemBuilder: (context, index) {
                     PurchasedDate dateObj = customer.products[index];
                     return Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 1)),
                       height: (mediaQuery.height * .5 -
                               AppBar().preferredSize.height) *
                           .4,
@@ -30,7 +28,8 @@ class CustomerProductDetail extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text(DateFormat('dd-MM-yyyy').format(dateObj.date)),
+                          Text('Date : ' +
+                              DateFormat('dd-MM-yyyy').format(dateObj.date)),
                           Container(
                             height: ((mediaQuery.height * .5 -
                                         AppBar().preferredSize.height) *
@@ -40,17 +39,19 @@ class CustomerProductDetail extends StatelessWidget {
                                 itemCount: dateObj.products.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                        mainAxisExtent: 100, crossAxisCount: 5),
+                                        mainAxisExtent: 90, crossAxisCount: 5),
                                 itemBuilder: (context, index) {
                                   CustomerProduct productObj =
                                       dateObj.products[index];
                                   return Container(
-                                    height: 200,
                                     decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: Colors.white,
                                         border: Border.all(
-                                            color: Colors.black, width: 1)),
+                                            color: Colors.black12, width: 1)),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(5),
+                                      padding: const EdgeInsets.only(
+                                          left: 5, right: 5),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,

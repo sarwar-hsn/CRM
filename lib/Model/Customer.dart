@@ -11,14 +11,14 @@ class Customer {
   String address;
   DateTime schedulePay;
   List<PurchasedDate> products = [];
-  Customer(
-      {this.id,
-      this.name,
-      this.mobile,
-      this.paid,
-      this.address,
-      this.schedulePay,
-      this.due,
-      this.total,
-      this.products});
+  Customer({
+    this.id,
+    this.name,
+    this.mobile,
+    this.paid,
+    this.address,
+    this.schedulePay,
+    this.due,
+    this.total,
+  });
 }
