@@ -29,7 +29,9 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
     final mediaQuery = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          title: Text('Customer Detail Screen'),
+          title: (customer == null)
+              ? Text('Customer Detail Screen')
+              : Text(customer.name),
           actions: [
             IconButton(
                 icon: Icon(Icons.arrow_back),
