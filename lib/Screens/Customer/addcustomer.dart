@@ -93,7 +93,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       PurchasedDate tempPurchasedDate = new PurchasedDate(
           date: customerProductDate, products: List.from(pickedItems));
       double total = 0;
-      print(tempPurchasedDate.date.toString());
+
       for (int i = 0; i < tempPurchasedDate.products.length; i++) {
         total += tempPurchasedDate.products[i].total;
       }
@@ -110,8 +110,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
         schedulePay: scheduledDate,
         total: total,
       );
-      print('total: ' + tempCustomer.total.toString());
-      print('due: ' + tempCustomer.due.toString());
+
       tempCustomer.products.add(tempPurchasedDate);
       tempCustomer.id = Uuid().v1();
       if (tempCustomer.paid != 0)
@@ -272,6 +271,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
               key: _customerForm,
               child: ListView(children: [
                 TextFormField(
+                  initialValue: 'sarwar',
                   decoration: getInputDesign('name'),
                   validator: (value) {
                     return _stringValidator(value);
@@ -285,6 +285,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 ),
                 TextFormField(
                   decoration: getInputDesign('mobile'),
+                  initialValue: '01733202514',
                   validator: (value) {
                     if (int.tryParse(value) != null && value.length == 11) {
                       return null;
@@ -300,6 +301,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 ),
                 TextFormField(
                   decoration: getInputDesign('address'),
+                  initialValue: 'birampur',
                   validator: (value) {
                     return _stringValidator(value);
                   },

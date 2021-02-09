@@ -66,22 +66,6 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     ];
   }
 
-  Map<String, Object> listofCustomerandTotalByDate(DateTime date) {
-    List<Customer> temp = [];
-    double total = 0;
-    for (int i = 0; i < _customers.length; i++) {
-      for (int j = 0; j < _customers[i].products.length; j++) {
-        if (_customers[i].products[j].date == date) {
-          for (int k = 0; k < _customers[i].products[j].products.length; k++) {
-            total += _customers[i].products[j].products[k].total;
-          }
-          temp.add(_customers[i]);
-        }
-      }
-    }
-    return {'customers': temp, 'total': total};
-  }
-
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
