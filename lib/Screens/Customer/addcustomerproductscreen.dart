@@ -227,11 +227,11 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                             child: TextFormField(
                               validator: (value) {
                                 String temp = _doubleValidator(value);
-                                if (temp == null) {
-                                  customerProduct.unitPrice =
-                                      double.parse(value);
-                                }
+
                                 return temp;
+                              },
+                              onSaved: (value) {
+                                customerProduct.unitPrice = double.parse(value);
                               },
                               decoration: (dropDownValueProducts == null)
                                   ? getInputDesign('unit price')
@@ -267,11 +267,12 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                             TextFormField(
                               decoration: getInputDesign('paid amount'),
                               validator: (value) {
-                                if (double.parse(value) >
-                                    customer.due + customerProduct.total) {
+                                if (value.isEmpty == false &&
+                                    double.parse(value) >
+                                        customer.due + customerProduct.total) {
                                   return 'payment is more than due';
-                                } else
-                                  return _doubleValidator(value);
+                                }
+                                return _doubleValidator(value);
                               },
                               onSaved: (value) {
                                 amountPaid = double.parse(value);
