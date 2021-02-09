@@ -53,6 +53,20 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
                           if (products.checkDuplicate(category) == false) {
                             products.addCategory(category);
                             _form.currentState.reset();
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: Text('Category Added'),
+                                    actions: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('ok'))
+                                    ],
+                                  );
+                                });
                           } else {
                             showDialog(
                                 context: context,

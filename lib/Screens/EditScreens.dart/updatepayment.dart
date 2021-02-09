@@ -61,6 +61,9 @@ class _UpdatePaymentState extends State<UpdatePayment> {
                           _form.currentState.save();
                           customer.paid += amount;
                           customer.due -= amount;
+                          if (amount != 0)
+                            customer.paymentDate
+                                .add({'date': DateTime.now(), 'paid': amount});
                           obj.callListner();
                           _form.currentState.reset();
                         }

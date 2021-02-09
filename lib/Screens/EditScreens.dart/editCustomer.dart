@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manage/Model/Customer.dart';
-import 'package:manage/Screens/Cusomer/addcustomer.dart';
+
 import 'package:manage/provider/Customers.dart';
 import 'package:provider/provider.dart';
+
+import 'EditProduct.dart';
 
 class EditCustomerScreen extends StatefulWidget {
   static const routeName = '/EditCustomerScreen';

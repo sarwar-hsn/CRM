@@ -1,10 +1,11 @@
+import 'package:manage/Screens/Customer/addcustomer.dart';
+import 'package:manage/Screens/Customer/customersScreen.dart';
+import 'package:manage/Screens/Others/transaction.dart';
 import 'package:manage/Screens/Product/ProductsScreen.dart';
 import 'package:manage/Screens/Product/addCategories.dart';
 import 'package:manage/Screens/Product/addProductsScreen.dart';
-import 'package:manage/Screens/Cusomer/addcustomer.dart';
-import 'package:manage/Screens/Product/catergoryScreen.dart';
 
-import '../Cusomer/customersScreen.dart';
+import 'package:manage/Screens/Product/catergoryScreen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -36,6 +37,10 @@ class MainDrawer extends StatelessWidget {
             BuildListTile(
               icon: Icons.money,
               text: 'Transaction History',
+              tapHandler: () {
+                Navigator.of(context)
+                    .pushReplacementNamed(TransactionHistoryScreen.routeName);
+              },
             ),
             BuildListTile(
               icon: Icons.scatter_plot_rounded,

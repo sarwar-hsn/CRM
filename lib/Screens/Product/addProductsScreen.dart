@@ -5,7 +5,6 @@ import 'package:manage/Widgets/errorContainer.dart';
 import 'package:provider/provider.dart';
 import '../../provider/products.dart';
 import 'package:uuid/uuid.dart';
-import 'package:uuid/uuid_util.dart';
 
 class AddProductsScreen extends StatefulWidget {
   static const routeName = '/addProductsScreen';
@@ -89,30 +88,6 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    TextFormField(
-                      decoration: getInputDesign('name'),
-                      onSaved: (value) {
-                        temp.name = value;
-                      },
-                      validator: (value) {
-                        if (double.tryParse(value) != null)
-                          return 'Expects unit name';
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      decoration: getInputDesign('unit price'),
-                      validator: (value) {
-                        if (double.tryParse(value) == null)
-                          return 'Expects amount in number';
-                        if (double.parse(value) < 0)
-                          return 'number can\'t be less than 0';
-                        return null;
-                      },
-                      onSaved: (value) {
-                        temp.unitPrice = double.parse(value);
-                      },
-                    ),
                     Container(
                       padding: EdgeInsets.only(left: 10, right: 10),
                       decoration: BoxDecoration(
@@ -148,6 +123,30 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                         : ErrorContainer(
                             errorContainerHeight: errorContainerHeight,
                             errorText: 'category is not selected'),
+                    TextFormField(
+                      decoration: getInputDesign('name'),
+                      onSaved: (value) {
+                        temp.name = value;
+                      },
+                      validator: (value) {
+                        if (double.tryParse(value) != null)
+                          return 'Expects unit name';
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      decoration: getInputDesign('unit price'),
+                      validator: (value) {
+                        if (double.tryParse(value) == null)
+                          return 'Expects amount in number';
+                        if (double.parse(value) < 0)
+                          return 'number can\'t be less than 0';
+                        return null;
+                      },
+                      onSaved: (value) {
+                        temp.unitPrice = double.parse(value);
+                      },
+                    ),
                     TextFormField(
                       decoration: getInputDesign('unit name'),
                       onSaved: (value) {

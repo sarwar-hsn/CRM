@@ -52,7 +52,13 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
             Text('paid: ' + customer.paid.toString()),
             Text(
               'due: ' + customer.due.toString(),
-            )
+            ),
+            (customer.schedulePay == null)
+                ? Text('schedule payment day : __')
+                : Text('Schedule payment Day: ' +
+                    DateFormat('dd-MM-yyyy')
+                        .format(customer.schedulePay)
+                        .toString())
           ],
         ),
       ),
@@ -60,6 +66,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
         ElevatedButton(
             onPressed: () {
               obj.addCustomer(customer);
+              obj.callListner();
               _customerForm.currentState.reset();
               setState(() {
                 scheduledDate = null;
@@ -107,6 +114,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       print('due: ' + tempCustomer.due.toString());
       tempCustomer.products.add(tempPurchasedDate);
       tempCustomer.id = Uuid().v1();
+      if (tempCustomer.paid != 0)
+        tempCustomer.paymentDate
+            .add({'date': DateTime.now(), 'paid': tempCustomer.paid});
 
       showDialog(
           barrierDismissible: false,
