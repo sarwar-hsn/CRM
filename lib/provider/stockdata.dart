@@ -31,5 +31,15 @@ class StockData with ChangeNotifier {
 
   void addStock(Stock newStock) {
     _stocks.add(newStock);
+    notifyListeners();
+  }
+
+  Stock getStockById(String id) {
+    for (int i = 0; i < _stocks.length; i++) {
+      if (_stocks[i].id == id) {
+        return _stocks[i];
+      }
+    }
+    return null;
   }
 }

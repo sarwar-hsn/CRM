@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:manage/Model/stock.dart';
 import 'package:manage/provider/stockdata.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class AddToStockScreen extends StatefulWidget {
   static const routeName = '/AddToStockScreen';
@@ -16,6 +17,7 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
   DateTime date = DateTime.now();
   final _companyNameForm = GlobalKey<FormState>();
   final _form = GlobalKey<FormState>();
+  Stock tempStock = new Stock();
 
   double tempTotalUnit = 0;
   double tempUnitPrice = 0;
@@ -82,36 +84,37 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
       });
   }
 
+  void _saveStock(StockData stocks) {
+    if (_form.currentState.validate()) {
+      _form.currentState.save();
+      tempStock.totalCost = tempStock.unitPrice * tempStock.totalUnit;
+      tempStock.due = tempStock.totalCost - tempStock.paid;
+      tempStock.companyName = dropDownValue;
+
+      Stock finalStock = deepCopyStock(tempStock);
+      finalStock.id = Uuid().v1();
+      finalStock.date = date;
+      if (finalStock.paid != 0)
+        finalStock.paymentHistory
+            .add({'date': date, 'payment': tempStock.paid});
+
+      stocks.addStock(finalStock);
+
+      _form.currentState.reset();
+      setState(() {
+        tempExtraFee = 0;
+        tempUnitPrice = 0;
+        tempTotal = 0;
+        tempTotalUnit = 0;
+        dropDownValue = null;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     StockData stockData = Provider.of<StockData>(context);
-    List<Stock> stock = stockData.stocks;
     List<String> companies = stockData.companies;
-    Stock tempStock = new Stock();
-
-    void _saveStock() {
-      if (_form.currentState.validate()) {
-        _form.currentState.save();
-        tempStock.totalCost = tempStock.unitPrice * tempStock.totalUnit;
-        tempStock.due = tempStock.totalCost - tempStock.paid;
-        print(tempStock.companyName);
-        print(tempStock.productName);
-        print(tempStock.unitPrice);
-        print(tempStock.totalUnit);
-        print(tempStock.extraFee);
-        print(tempStock.totalCost);
-        print(tempStock.paid);
-        print(tempStock.due);
-        _form.currentState.reset();
-        setState(() {
-          tempExtraFee = 0;
-          tempUnitPrice = 0;
-          tempTotal = 0;
-          tempTotalUnit = 0;
-          dropDownValue = null;
-        });
-      }
-    }
 
     return Scaffold(
         appBar: AppBar(title: Text('Add to Stock')),
@@ -274,7 +277,7 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                       dateContainer(context, _pickDate, 'Select Date'),
                       ElevatedButton(
                           onPressed: () {
-                            _saveStock();
+                            _saveStock(stockData);
                           },
                           child: Text('ADD'))
                     ],
@@ -346,4 +349,18 @@ String _doubleValidator(String value) {
     return 'negetive number not allowed';
   }
   return null;
+}
+
+Stock deepCopyStock(Stock tempStock) {
+  Stock temp = new Stock(
+    companyName: tempStock.companyName,
+    due: tempStock.due,
+    extraFee: tempStock.extraFee,
+    paid: tempStock.paid,
+    productName: tempStock.productName,
+    totalCost: tempStock.totalCost,
+    totalUnit: tempStock.totalUnit,
+    unitPrice: tempStock.unitPrice,
+  );
+  return temp;
 }

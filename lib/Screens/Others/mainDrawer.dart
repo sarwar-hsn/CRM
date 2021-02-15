@@ -10,6 +10,7 @@ import 'package:manage/Screens/Product/catergoryScreen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:manage/Screens/Stock/addStockScreen.dart';
+import 'package:manage/Screens/Stock/mystock.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
@@ -86,6 +87,13 @@ class MainDrawer extends StatelessWidget {
               text: 'Add to Stock',
               tapHandler: () {
                 Navigator.of(context).pushNamed(AddToStockScreen.routeName);
+              },
+            ),
+            BuildListTile(
+              icon: Icons.storage,
+              text: 'My  Stock',
+              tapHandler: () {
+                Navigator.of(context).pushNamed(MyStockScreen.routeName);
               },
             ),
           ],

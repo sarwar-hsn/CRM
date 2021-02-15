@@ -9,6 +9,8 @@ import 'package:manage/Screens/Product/addCategories.dart';
 import 'package:manage/Screens/Product/addProductsScreen.dart';
 import 'package:manage/Screens/Product/catergoryScreen.dart';
 import 'package:manage/Screens/Stock/addStockScreen.dart';
+import 'package:manage/Screens/Stock/mystock.dart';
+import 'package:manage/Screens/Stock/stockdetail.dart';
 import 'package:manage/provider/Customers.dart';
 import 'package:manage/provider/products.dart';
 import 'package:manage/provider/stockdata.dart';
@@ -56,6 +58,8 @@ class MyApp extends StatelessWidget {
               TransactionHistoryScreen(),
           DailyCheck.routeName: (context) => DailyCheck(),
           AddToStockScreen.routeName: (context) => AddToStockScreen(),
+          MyStockScreen.routeName: (context) => MyStockScreen(),
+          StockDetailScreen.routeName: (context) => StockDetailScreen(),
         },
       ),
     );
