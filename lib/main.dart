@@ -3,12 +3,15 @@ import 'package:manage/Screens/Customer/addcustomer.dart';
 import 'package:manage/Screens/EditScreens.dart/EditProduct.dart';
 import 'package:manage/Screens/EditScreens.dart/editCustomer.dart';
 import 'package:manage/Screens/EditScreens.dart/updatepayment.dart';
+import 'package:manage/Screens/Others/dailycheck.dart';
 import 'package:manage/Screens/Others/transaction.dart';
 import 'package:manage/Screens/Product/addCategories.dart';
 import 'package:manage/Screens/Product/addProductsScreen.dart';
 import 'package:manage/Screens/Product/catergoryScreen.dart';
+import 'package:manage/Screens/Stock/addStockScreen.dart';
 import 'package:manage/provider/Customers.dart';
 import 'package:manage/provider/products.dart';
+import 'package:manage/provider/stockdata.dart';
 import 'package:provider/provider.dart';
 import 'Screens/Customer/addcustomerproductscreen.dart';
 import 'Screens/Customer/customerDetailScreen.dart';
@@ -28,6 +31,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => Products()),
         ChangeNotifierProvider(create: (context) => Customers()),
+        ChangeNotifierProvider(create: (context) => StockData()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -50,6 +54,8 @@ class MyApp extends StatelessWidget {
               AddCustomerProductScreen(),
           TransactionHistoryScreen.routeName: (context) =>
               TransactionHistoryScreen(),
+          DailyCheck.routeName: (context) => DailyCheck(),
+          AddToStockScreen.routeName: (context) => AddToStockScreen(),
         },
       ),
     );

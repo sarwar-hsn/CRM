@@ -1,5 +1,6 @@
 import 'package:manage/Screens/Customer/addcustomer.dart';
 import 'package:manage/Screens/Customer/customersScreen.dart';
+import 'package:manage/Screens/Others/dailycheck.dart';
 import 'package:manage/Screens/Others/transaction.dart';
 import 'package:manage/Screens/Product/ProductsScreen.dart';
 import 'package:manage/Screens/Product/addCategories.dart';
@@ -8,6 +9,7 @@ import 'package:manage/Screens/Product/addProductsScreen.dart';
 import 'package:manage/Screens/Product/catergoryScreen.dart';
 
 import 'package:flutter/material.dart';
+import 'package:manage/Screens/Stock/addStockScreen.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
@@ -71,7 +73,21 @@ class MainDrawer extends StatelessWidget {
                 Navigator.of(context).pushNamed(AddCategoriesScreen.routeName);
               },
             ),
-            BuildListTile(icon: Icons.notifications, text: 'Daily Check'),
+            BuildListTile(
+              icon: Icons.notifications,
+              text: 'Daily Check',
+              tapHandler: () {
+                Navigator.of(context)
+                    .pushReplacementNamed(DailyCheck.routeName);
+              },
+            ),
+            BuildListTile(
+              icon: Icons.add_shopping_cart,
+              text: 'Add to Stock',
+              tapHandler: () {
+                Navigator.of(context).pushNamed(AddToStockScreen.routeName);
+              },
+            ),
           ],
         ),
       ),

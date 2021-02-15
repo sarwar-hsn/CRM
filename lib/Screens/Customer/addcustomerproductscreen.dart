@@ -27,6 +27,7 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
   CustomerProduct customerProduct = new CustomerProduct();
   Product dropDownValueProducts;
   String dropDownValueCategory;
+  int flag = 0;
 
   void _updateCustomer(Customer customer, Customers obj) {
     if (_updateForm.currentState.validate()) {
@@ -34,6 +35,23 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
       customer.paid += amountPaid;
       customer.total += customerProduct.total;
       customer.due = customer.total - customer.paid;
+      for (int i = 0; i < customer.products.length; i++) {
+        if (DateFormat('dd-MM-yyyy')
+                .format(customer.products[i].date)
+                .toString() ==
+            DateFormat('dd-MM-yyyy').format(customerProductDate).toString()) {
+          for (int j = 0; j < pickedItems.length; j++) {
+            customer.products[i].products.add(pickedItems[j]);
+          }
+
+          if (amountPaid != 0)
+            customer.paymentDate
+                .add({'date': customerProductDate, 'paid': amountPaid});
+          obj.callListner();
+          Navigator.of(context).pop();
+          return;
+        }
+      }
       customer.products.add(new PurchasedDate(
           date: customerProductDate, products: List.from(pickedItems)));
       _updateForm.currentState.reset();

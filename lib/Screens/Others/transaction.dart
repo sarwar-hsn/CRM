@@ -15,7 +15,7 @@ class TransactionHistoryScreen extends StatefulWidget {
 }
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
-  DateTime selectDate = null;
+  DateTime selectDate;
 
   Future<void> _pickDateforCustomerProduct() async {
     DateTime date = await showDatePicker(
@@ -109,7 +109,14 @@ Map<String, Object> listofCustomerandTotalByDate(
     }
   }
   for (int i = 0; i < temp.length; i++) {
-    deposite += temp[i].paid;
+    for (int j = 0; j < temp[i].paymentDate.length; j++) {
+      if (DateFormat('dd-MM-yyyy')
+              .format(temp[i].paymentDate[j]['date'])
+              .toString() ==
+          DateFormat('dd-MM-yyyy').format(date).toString()) {
+        deposite += temp[i].paymentDate[j]['paid'];
+      }
+    }
   }
   due = total - deposite;
   return {
@@ -126,7 +133,8 @@ class SingleBoxDesign extends StatelessWidget {
   SingleBoxDesign({this.date});
   @override
   Widget build(BuildContext context) {
-    List<Customer> customer = Provider.of<Customers>(context).customers;
+    Customers customers = Provider.of<Customers>(context);
+    List<Customer> customer = customers.customers;
     Map<String, Object> data = listofCustomerandTotalByDate(date, customer);
     List<Customer> tempCustomer = data['customers'] as List<Customer>;
     List<String> id = data['id'] as List<String>;
@@ -165,7 +173,22 @@ class SingleBoxDesign extends StatelessWidget {
                         arguments: id[index]);
                   },
                   leading: Icon(Icons.person),
-                  title: Text(tempCustomer[index].name),
+                  title: Text(tempCustomer[index].name +
+                      '->  total : ' +
+                      customers
+                          .getCustomerPaymentInfoByDate(
+                              tempCustomer[index].id, date)['total']
+                          .toString() +
+                      '  paid : ' +
+                      customers
+                          .getCustomerPaymentInfoByDate(
+                              tempCustomer[index].id, date)['paid']
+                          .toString() +
+                      '  due : ' +
+                      customers
+                          .getCustomerPaymentInfoByDate(
+                              tempCustomer[index].id, date)['due']
+                          .toString()),
                 );
               },
             ),
@@ -178,7 +201,8 @@ class InsideContainer extends StatelessWidget {
   InsideContainer({this.date});
   @override
   Widget build(BuildContext context) {
-    List<Customer> customer = Provider.of<Customers>(context).customers;
+    Customers customers = Provider.of<Customers>(context);
+    List<Customer> customer = customers.customers;
     Map<String, Object> data = listofCustomerandTotalByDate(date, customer);
     List<Customer> tempCustomer = data['customers'] as List<Customer>;
     List<String> id = data['id'] as List<String>;
@@ -220,7 +244,22 @@ class InsideContainer extends StatelessWidget {
                             arguments: id[index]);
                       },
                       leading: Icon(Icons.person),
-                      title: Text(tempCustomer[index].name),
+                      title: Text(tempCustomer[index].name +
+                          '->  total : ' +
+                          customers
+                              .getCustomerPaymentInfoByDate(
+                                  tempCustomer[index].id, date)['total']
+                              .toString() +
+                          '  paid : ' +
+                          customers
+                              .getCustomerPaymentInfoByDate(
+                                  tempCustomer[index].id, date)['paid']
+                              .toString() +
+                          '  due : ' +
+                          customers
+                              .getCustomerPaymentInfoByDate(
+                                  tempCustomer[index].id, date)['due']
+                              .toString()),
                     );
                   },
                 ),

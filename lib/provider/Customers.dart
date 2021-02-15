@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:manage/Model/CustomerProduct.dart';
 import 'package:manage/Model/PurchasedDate.dart';
 import 'package:manage/Screens/Customer/customerDetailScreen.dart';
@@ -35,6 +36,20 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     _customers.sort((a, b) => a.name.compareTo(b.name));
   }
 
+  List<Customer> scheduledCustomer(DateTime date) {
+    List<Customer> temp = [];
+    for (int i = 0; i < _customers.length; i++) {
+      if (_customers[i].schedulePay != null &&
+          DateFormat('dd-MM-yyyy').format(date).toString() ==
+              DateFormat('dd-MM-yyyy')
+                  .format(_customers[i].schedulePay)
+                  .toString()) {
+        temp.add(_customers[i]);
+      }
+    }
+    return temp;
+  }
+
   List<Customer> get customers {
     return [..._customers];
   }
@@ -44,6 +59,31 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
       if (_customers[i].id == id) return _customers[i];
     }
     return null;
+  }
+
+  Map<String, Object> getCustomerPaymentInfoByDate(String id, DateTime date) {
+    double total = 0, paid = 0, due = 0;
+    Customer customer = getCustomerById(id);
+    for (int i = 0; i < customer.products.length; i++) {
+      if (DateFormat('dd-MM-yyyy').format(customer.products[i].date) ==
+          DateFormat('dd-MM-yyyy').format(date)) {
+        for (int j = 0; j < customer.products[i].products.length; j++) {
+          total += customer.products[i].products[j].total;
+        }
+      }
+    }
+    for (int i = 0; i < customer.paymentDate.length; i++) {
+      if (DateFormat('dd-MM-yyyy').format(date) ==
+          DateFormat('dd-MM-yyyy').format(customer.paymentDate[i]['date'])) {
+        paid += customer.paymentDate[i]['paid'];
+      }
+    }
+    due = total - paid;
+    return {
+      'total': total,
+      'paid': paid,
+      'due': due,
+    };
   }
 
   void callListner() {
