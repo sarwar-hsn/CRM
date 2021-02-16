@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manage/Model/stock.dart';
 import 'package:manage/Screens/Others/mainDrawer.dart';
+
+import 'package:manage/Screens/Stock/updatestockpayment.dart';
 import 'package:manage/provider/stockdata.dart';
 import 'package:provider/provider.dart';
 
@@ -55,14 +57,22 @@ class StockDetailScreen extends StatelessWidget {
                                         children: [
                                           ElevatedButton(
                                             child: Text('Update Payment'),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.of(context).pushNamed(
+                                                  UpdateStockPaymentScreen
+                                                      .routeName,
+                                                  arguments: stock);
+                                            },
                                           ),
                                           SizedBox(
                                             width: 10,
                                           ),
                                           ElevatedButton(
-                                            child: Text('Edit Stock'),
-                                            onPressed: () {},
+                                            child: Text('Delete Stock'),
+                                            onPressed: () {
+                                              stockData.deleteStock(stockId);
+                                              Navigator.of(context).pop();
+                                            },
                                           ),
                                           SizedBox(
                                             width: 10,

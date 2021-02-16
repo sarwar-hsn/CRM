@@ -42,4 +42,25 @@ class StockData with ChangeNotifier {
     }
     return null;
   }
+
+  Stock deleteStock(String id) {
+    Stock temp = getStockById(id);
+    int index = getIndexbyId(id);
+    if (index != -1) {
+      _stocks.removeAt(index);
+    }
+    notifyListeners();
+    return temp;
+  }
+
+  int getIndexbyId(String id) {
+    for (int i = 0; i < _stocks.length; i++) {
+      if (_stocks[i].id == id) return i;
+    }
+    return -1;
+  }
+
+  void callListerner() {
+    notifyListeners();
+  }
 }
