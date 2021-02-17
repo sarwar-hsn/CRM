@@ -15,9 +15,9 @@ class CustomersScreen extends StatefulWidget {
 class _CustomersScreenState extends State<CustomersScreen> {
   @override
   void initState() {
-    // Future.delayed(Duration.zero).then((value) {
-    //   Provider.of<Customers>(context, listen: false).fetCustomers();
-    // });
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<Customers>(context, listen: false).fetCustomers();
+    });
     super.initState();
   }
 

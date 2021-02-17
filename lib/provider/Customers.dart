@@ -12,26 +12,7 @@ import 'package:uuid/uuid_util.dart';
 import 'package:http/http.dart' as http;
 
 class Customers extends SearchDelegate<String> with ChangeNotifier {
-  List<Customer> _customers = [
-    Customer(
-      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
-      name: 'Abdul',
-      mobile: '01736524187',
-      total: 1000,
-      paid: 300,
-      due: 700,
-      address: 'birampur',
-    ),
-    Customer(
-      id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.facebook.com'),
-      name: 'Hamid',
-      mobile: '0173658967',
-      total: 10000,
-      paid: 3000,
-      due: 7000,
-      address: 'Hili',
-    ),
-  ];
+  List<Customer> _customers = [];
 
   void customerByName() {
     _customers.sort((a, b) => a.name.compareTo(b.name));
@@ -120,7 +101,17 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
         'https://shohel-traders-default-rtdb.firebaseio.com/customers.json';
     try {
       var response = await http.get(url);
-      print(json.decode(response.body));
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      List<Customer> loadedCustomer = [];
+      List<PurchasedDate> purchasedDate = [];
+      extractedData.forEach((customerId, customerData) {
+        Customer temp = Customer.fromJson(customerData);
+        temp.id = customerId;
+        loadedCustomer.add(temp);
+      });
+
+      _customers = loadedCustomer;
+      notifyListeners();
     } catch (e) {
       print('Error' + e.toString());
     }
