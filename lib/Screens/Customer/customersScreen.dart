@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manage/Widgets/CustomerListView.dart';
 import 'package:manage/Screens/Others/mainDrawer.dart';
 import 'package:manage/provider/Customers.dart';
+import 'package:provider/provider.dart';
 import '../../Widgets/searchByName.dart';
 
 class CustomersScreen extends StatefulWidget {
@@ -12,6 +13,14 @@ class CustomersScreen extends StatefulWidget {
 }
 
 class _CustomersScreenState extends State<CustomersScreen> {
+  @override
+  void initState() {
+    // Future.delayed(Duration.zero).then((value) {
+    //   Provider.of<Customers>(context, listen: false).fetCustomers();
+    // });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

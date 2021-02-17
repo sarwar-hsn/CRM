@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +9,7 @@ import 'package:manage/Screens/Customer/customerDetailScreen.dart';
 import '../Model/Customer.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
+import 'package:http/http.dart' as http;
 
 class Customers extends SearchDelegate<String> with ChangeNotifier {
   List<Customer> _customers = [
@@ -18,7 +21,6 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
       paid: 300,
       due: 700,
       address: 'birampur',
-      schedulePay: DateTime.now(),
     ),
     Customer(
       id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.facebook.com'),
@@ -28,7 +30,6 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
       paid: 3000,
       due: 7000,
       address: 'Hili',
-      schedulePay: DateTime.now(),
     ),
   ];
 
@@ -41,9 +42,7 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     for (int i = 0; i < _customers.length; i++) {
       if (_customers[i].schedulePay != null &&
           DateFormat('dd-MM-yyyy').format(date).toString() ==
-              DateFormat('dd-MM-yyyy')
-                  .format(_customers[i].schedulePay)
-                  .toString()) {
+              _customers[i].schedulePay.toString()) {
         temp.add(_customers[i]);
       }
     }
@@ -65,8 +64,7 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     double total = 0, paid = 0, due = 0;
     Customer customer = getCustomerById(id);
     for (int i = 0; i < customer.products.length; i++) {
-      if (DateFormat('dd-MM-yyyy').format(customer.products[i].date) ==
-          DateFormat('dd-MM-yyyy').format(date)) {
+      if (customer.products[i].date == DateFormat('dd-MM-yyyy').format(date)) {
         for (int j = 0; j < customer.products[i].products.length; j++) {
           total += customer.products[i].products[j].total;
         }
@@ -90,8 +88,42 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     notifyListeners();
   }
 
-  void addCustomer(Customer newCustomer) {
-    _customers.add(newCustomer);
+  Future<void> addCustomer(Customer newCustomer) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/customers.json';
+    try {
+      var response = await http.post(url,
+          body: json.encode({
+            'name': newCustomer.name,
+            'mobile': newCustomer.mobile,
+            'total': newCustomer.total,
+            'paid': newCustomer.paid,
+            'due': newCustomer.due,
+            'products': newCustomer.products,
+            'schdulePay': newCustomer.schedulePay,
+            'address': newCustomer.address,
+            'paymentDate': newCustomer.paymentDate
+          }));
+      if (response.statusCode == 200) {
+        newCustomer.id = jsonDecode(response.body)['name'];
+        _customers.add(newCustomer);
+        notifyListeners();
+      } else
+        throw Exception();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> fetCustomers() async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/customers.json';
+    try {
+      var response = await http.get(url);
+      print(json.decode(response.body));
+    } catch (e) {
+      print('Error' + e.toString());
+    }
   }
 
   List<Customer> recentSearch = [];

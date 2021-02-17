@@ -28,8 +28,7 @@ class CustomerProductDetail extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text('Date : ' +
-                              DateFormat('dd-MM-yyyy').format(dateObj.date)),
+                          Text('Date : ' + dateObj.date),
                           Container(
                             height: ((mediaQuery.height * .5 -
                                         AppBar().preferredSize.height) *

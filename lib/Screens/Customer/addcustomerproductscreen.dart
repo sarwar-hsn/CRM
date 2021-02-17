@@ -36,10 +36,8 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
       customer.total += customerProduct.total;
       customer.due = customer.total - customer.paid;
       for (int i = 0; i < customer.products.length; i++) {
-        if (DateFormat('dd-MM-yyyy')
-                .format(customer.products[i].date)
-                .toString() ==
-            DateFormat('dd-MM-yyyy').format(customerProductDate).toString()) {
+        if (customer.products[i].date ==
+            DateFormat('dd-MM-yyyy').format(customerProductDate)) {
           for (int j = 0; j < pickedItems.length; j++) {
             customer.products[i].products.add(pickedItems[j]);
           }
@@ -53,7 +51,8 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
         }
       }
       customer.products.add(new PurchasedDate(
-          date: customerProductDate, products: List.from(pickedItems)));
+          date: DateFormat('dd-MM-yyyy').format(customerProductDate),
+          products: List.from(pickedItems)));
       _updateForm.currentState.reset();
 
       if (amountPaid != 0)

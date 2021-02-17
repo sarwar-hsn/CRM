@@ -23,7 +23,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
     if (isValid) {
       _form.currentState.save();
       customer.due = customer.total - customer.paid;
-      customer.schedulePay = scheduledDate;
+      customer.schedulePay = DateFormat('dd-MM-yyyy').format(scheduledDate);
       _form.currentState.reset();
       obj.callListner();
       Navigator.of(context).pop();
@@ -67,7 +67,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
                     ? Text('no date selected')
                     : (scheduledDate == null && temp.schedulePay != null)
                         ? Text(
-                            DateFormat('dd-MM-yyyy').format(temp.schedulePay),
+                            temp.schedulePay,
                             style: TextStyle(color: Colors.black45),
                           )
                         : Text(

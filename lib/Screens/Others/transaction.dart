@@ -92,13 +92,8 @@ Map<String, Object> listofCustomerandTotalByDate(
   double due = 0;
   for (int i = 0; i < customer.length; i++) {
     for (int j = 0; j < customer[i].products.length; j++) {
-      print('customer purchase Date : ' +
-          DateFormat('dd-MM-yyyy')
-              .format(customer[i].products[j].date)
-              .toString());
-      if (DateFormat('dd-MM-yyyy')
-              .format(customer[i].products[j].date)
-              .toString() ==
+      print('customer purchase Date : ' + customer[i].products[j].date);
+      if (customer[i].products[j].date ==
           DateFormat('dd-MM-yyyy').format(date).toString()) {
         id.add(customer[i].id);
         for (int k = 0; k < customer[i].products[j].products.length; k++) {

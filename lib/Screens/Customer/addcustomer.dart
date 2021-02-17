@@ -20,6 +20,8 @@ class AddCustomerScreen extends StatefulWidget {
 }
 
 class _AddCustomerScreenState extends State<AddCustomerScreen> {
+  bool isLoading = false;
+
   DateTime scheduledDate;
   DateTime customerProductDate = DateTime.now();
 
@@ -53,32 +55,21 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
             Text(
               'due: ' + customer.due.toString(),
             ),
-            (customer.schedulePay == null)
+            (customer.schedulePay.isEmpty)
                 ? Text('schedule payment day : __')
-                : Text('Schedule payment Day: ' +
-                    DateFormat('dd-MM-yyyy')
-                        .format(customer.schedulePay)
-                        .toString())
+                : Text('schedule payment day : ' + customer.schedulePay)
           ],
         ),
       ),
       actions: [
         ElevatedButton(
             onPressed: () {
-              obj.addCustomer(customer);
-              obj.callListner();
-              _customerForm.currentState.reset();
-              setState(() {
-                scheduledDate = null;
-                customerProductDate = DateTime.now();
-                pickedItems.clear();
-              });
-              Navigator.of(context).pop();
+              Navigator.pop(context, true);
             },
             child: Text('confirm')),
         ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context, false);
             },
             child: Text('no'))
       ],
@@ -89,9 +80,13 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     bool isValid = _customerForm.currentState.validate();
     if (isValid) {
       _customerForm.currentState.save();
-      customer.schedulePay = scheduledDate;
+      (scheduledDate == null)
+          ? customer.schedulePay = 'Scheduled Pay : ___'
+          : customer.schedulePay =
+              DateFormat('dd-MM-yyyy').format(scheduledDate);
       PurchasedDate tempPurchasedDate = new PurchasedDate(
-          date: customerProductDate, products: List.from(pickedItems));
+          date: DateFormat('dd-MM-yyyy').format(customerProductDate),
+          products: List.from(pickedItems));
       double total = 0;
 
       for (int i = 0; i < tempPurchasedDate.products.length; i++) {
@@ -107,22 +102,56 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
         mobile: customer.mobile,
         name: customer.name,
         paid: customer.paid,
-        schedulePay: scheduledDate,
+        schedulePay: customer.schedulePay,
         total: total,
       );
 
       tempCustomer.products.add(tempPurchasedDate);
       tempCustomer.id = Uuid().v1();
       if (tempCustomer.paid != 0)
-        tempCustomer.paymentDate
-            .add({'date': DateTime.now(), 'paid': tempCustomer.paid});
+        tempCustomer.paymentDate.add({
+          'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          'paid': tempCustomer.paid
+        });
 
       showDialog(
           barrierDismissible: false,
           context: context,
           builder: (context) {
             return getAlertDialog(obj, tempCustomer);
+          }).then((value) async {
+        if (value) {
+          setState(() {
+            isLoading = true;
           });
+          try {
+            await obj.addCustomer(tempCustomer);
+          } catch (e) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text('something went wrong !!!'),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('okay'))
+                    ],
+                  );
+                });
+          }
+          setState(() {
+            isLoading = false;
+            scheduledDate = null;
+            customerProductDate = DateTime.now();
+            pickedItems.clear();
+          });
+        }
+      });
+
+      _customerForm.currentState.reset();
     }
   }
 
@@ -261,237 +290,243 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       appBar: AppBar(
         title: Text('Add Customer'),
       ),
-      body: Row(
-        children: [
-          Container(
-            height: mediaQuery.size.height * .9,
-            width: mediaQuery.size.width * .5,
-            padding: EdgeInsets.all(20),
-            child: Form(
-              key: _customerForm,
-              child: ListView(children: [
-                TextFormField(
-                  initialValue: 'sarwar',
-                  decoration: getInputDesign('name'),
-                  validator: (value) {
-                    return _stringValidator(value);
-                  },
-                  onSaved: (value) {
-                    customer.name = value;
-                  },
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  decoration: getInputDesign('mobile'),
-                  initialValue: '01733202514',
-                  validator: (value) {
-                    if (int.tryParse(value) != null && value.length == 11) {
-                      return null;
-                    }
-                    return 'Invalid number';
-                  },
-                  onSaved: (value) {
-                    customer.mobile = value;
-                  },
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  decoration: getInputDesign('address'),
-                  initialValue: 'birampur',
-                  validator: (value) {
-                    return _stringValidator(value);
-                  },
-                  onSaved: (value) {
-                    customer.address = value;
-                  },
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Form(
-                  key: _customerProductForm,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          ElevatedButton(
-                              onPressed: (pickedItems.isEmpty)
-                                  ? _pickDateforCustomerProduct
-                                  : null,
-                              child: Text(
-                                  'Selecet a date for prducts ( default is today ) :')),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              width: 150,
-                              decoration: _decoration,
-                              child: Text(DateFormat('dd-MM-yyyy')
-                                  .format(customerProductDate)),
+      body: (isLoading)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Row(
+              children: [
+                Container(
+                  height: mediaQuery.size.height * .9,
+                  width: mediaQuery.size.width * .5,
+                  padding: EdgeInsets.all(20),
+                  child: Form(
+                    key: _customerForm,
+                    child: ListView(children: [
+                      TextFormField(
+                        initialValue: 'sarwar',
+                        decoration: getInputDesign('name'),
+                        validator: (value) {
+                          return _stringValidator(value);
+                        },
+                        onSaved: (value) {
+                          customer.name = value;
+                        },
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        decoration: getInputDesign('mobile'),
+                        initialValue: '01733202514',
+                        validator: (value) {
+                          if (int.tryParse(value) != null &&
+                              value.length == 11) {
+                            return null;
+                          }
+                          return 'Invalid number';
+                        },
+                        onSaved: (value) {
+                          customer.mobile = value;
+                        },
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        decoration: getInputDesign('address'),
+                        initialValue: 'birampur',
+                        validator: (value) {
+                          return _stringValidator(value);
+                        },
+                        onSaved: (value) {
+                          customer.address = value;
+                        },
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Form(
+                        key: _customerProductForm,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                ElevatedButton(
+                                    onPressed: (pickedItems.isEmpty)
+                                        ? _pickDateforCustomerProduct
+                                        : null,
+                                    child: Text(
+                                        'Selecet a date for prducts ( default is today ) :')),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    width: 150,
+                                    decoration: _decoration,
+                                    child: Text(DateFormat('dd-MM-yyyy')
+                                        .format(customerProductDate)),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    height: 40,
+                                    padding: EdgeInsets.all(8),
+                                    decoration: _decoration,
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                          hint: Text('Select Category'),
+                                          value: dropDownValueCategory,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              dropDownValueCategory = value;
+                                              dropDownValueProducts = null;
+                                            });
+                                          },
+                                          items: obj.categories.map((value) {
+                                            return DropdownMenuItem(
+                                              child: Text(value),
+                                              value: value,
+                                            );
+                                          }).toList()),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 40,
+                                    padding: EdgeInsets.all(8),
+                                    decoration: _decoration,
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        hint: Text('select Product'),
+                                        value: dropDownValueProducts,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            dropDownValueProducts = value;
+                                          });
+                                        },
+                                        items: obj
+                                            .getProductsbyCategory(
+                                                dropDownValueCategory)
+                                            .map((value) {
+                                          return DropdownMenuItem(
+                                            child: Text(value.name),
+                                            value: value,
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                customDesignedContainer('Unit Purchase :'),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                    decoration: getInputDesign('amount...'),
+                                    validator: (value) {
+                                      return _doubleValidator(value);
+                                    },
+                                    onSaved: (value) {
+                                      customerProduct.unitPurchased =
+                                          double.parse(value);
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                customDesignedContainer('Unit Price : '),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      String temp = _doubleValidator(value);
+                                      if (temp == null) {
+                                        customerProduct.unitPrice =
+                                            double.parse(value);
+                                      }
+                                      return temp;
+                                    },
+                                    decoration: (dropDownValueProducts == null)
+                                        ? getInputDesign('unit price')
+                                        : getInputDesign(dropDownValueProducts
+                                                .unitPrice
+                                                .toString() +
+                                            ' / ' +
+                                            dropDownValueProducts.unitName),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                    onPressed: () {
+                                      _saveCustomerProduct();
+                                    },
+                                    child: Text('ADD PRODUCT')),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                       SizedBox(
                         height: 10,
                       ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              height: 40,
-                              padding: EdgeInsets.all(8),
-                              decoration: _decoration,
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                    hint: Text('Select Category'),
-                                    value: dropDownValueCategory,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        dropDownValueCategory = value;
-                                        dropDownValueProducts = null;
-                                      });
-                                    },
-                                    items: obj.categories.map((value) {
-                                      return DropdownMenuItem(
-                                        child: Text(value),
-                                        value: value,
-                                      );
-                                    }).toList()),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: 40,
-                              padding: EdgeInsets.all(8),
-                              decoration: _decoration,
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  hint: Text('select Product'),
-                                  value: dropDownValueProducts,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      dropDownValueProducts = value;
-                                    });
-                                  },
-                                  items: obj
-                                      .getProductsbyCategory(
-                                          dropDownValueCategory)
-                                      .map((value) {
-                                    return DropdownMenuItem(
-                                      child: Text(value.name),
-                                      value: value,
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+                      TextFormField(
+                        decoration: getInputDesign('paid amount'),
+                        validator: (value) {
+                          String temp = _doubleValidator(value);
+                          if (temp == null) {
+                            customer.paid = double.parse(value);
+                          }
+                          return temp;
+                        },
                       ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          customDesignedContainer('Unit Purchase :'),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              decoration: getInputDesign('amount...'),
-                              validator: (value) {
-                                return _doubleValidator(value);
-                              },
-                              onSaved: (value) {
-                                customerProduct.unitPurchased =
-                                    double.parse(value);
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          customDesignedContainer('Unit Price : '),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              validator: (value) {
-                                String temp = _doubleValidator(value);
-                                if (temp == null) {
-                                  customerProduct.unitPrice =
-                                      double.parse(value);
-                                }
-                                return temp;
-                              },
-                              decoration: (dropDownValueProducts == null)
-                                  ? getInputDesign('unit price')
-                                  : getInputDesign(dropDownValueProducts
-                                          .unitPrice
-                                          .toString() +
-                                      ' / ' +
-                                      dropDownValueProducts.unitName),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                              onPressed: () {
-                                _saveCustomerProduct();
-                              },
-                              child: Text('ADD PRODUCT')),
-                        ],
-                      )
-                    ],
+                      dateContainer(
+                          context, _pickDateforSchedule, 'scheduled date'),
+                      ElevatedButton(
+                          onPressed: () {
+                            _saveCustomerForm(customerObj);
+                          },
+                          child: Text('SAVE CUSTOMER'))
+                    ]),
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  width: mediaQuery.size.width * .1,
                 ),
-                TextFormField(
-                  decoration: getInputDesign('paid amount'),
-                  validator: (value) {
-                    String temp = _doubleValidator(value);
-                    if (temp == null) {
-                      customer.paid = double.parse(value);
-                    }
-                    return temp;
-                  },
-                ),
-                dateContainer(context, _pickDateforSchedule, 'scheduled date'),
-                ElevatedButton(
-                    onPressed: () {
-                      _saveCustomerForm(customerObj);
-                    },
-                    child: Text('SAVE CUSTOMER'))
-              ]),
+                inputProductsContainer()
+              ],
             ),
-          ),
-          SizedBox(
-            width: mediaQuery.size.width * .1,
-          ),
-          inputProductsContainer()
-        ],
-      ),
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:manage/Model/Customer.dart';
 
 import 'package:flutter/material.dart';
@@ -62,8 +63,11 @@ class _UpdatePaymentState extends State<UpdatePayment> {
                           customer.paid += amount;
                           customer.due -= amount;
                           if (amount != 0)
-                            customer.paymentDate
-                                .add({'date': DateTime.now(), 'paid': amount});
+                            customer.paymentDate.add({
+                              'date': DateFormat('dd-MM-yyyy')
+                                  .format(DateTime.now()),
+                              'paid': amount
+                            });
                           obj.callListner();
                           _form.currentState.reset();
                         }

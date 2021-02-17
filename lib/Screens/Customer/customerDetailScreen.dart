@@ -129,10 +129,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                                                       'Schedule Payment Day : ----')
                                                   : Text(
                                                       'Scheduled payment Day : ' +
-                                                          DateFormat(
-                                                                  'dd-MM-yyyy')
-                                                              .format(customer
-                                                                  .schedulePay))
+                                                          customer.schedulePay)
                                             ],
                                           ),
                                         ),
@@ -175,11 +172,8 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                                           }
                                           index -= 1;
                                           return Text('Date : ' +
-                                              DateFormat('dd-MM-yyyy')
-                                                  .format(customer
-                                                          .paymentDate[index]
-                                                      ['date'])
-                                                  .toString() +
+                                              customer.paymentDate[index]
+                                                  ['date'] +
                                               '     Amount paid : ' +
                                               customer.paymentDate[index]
                                                       ['paid']
