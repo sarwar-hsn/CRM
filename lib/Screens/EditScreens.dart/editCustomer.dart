@@ -22,11 +22,34 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
     bool isValid = _form.currentState.validate();
     if (isValid) {
       _form.currentState.save();
-      customer.due = customer.total - customer.paid;
-      customer.schedulePay = DateFormat('dd-MM-yyyy').format(scheduledDate);
-      _form.currentState.reset();
-      obj.callListner();
-      Navigator.of(context).pop();
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: Text('confirm')),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                    child: Text('cancel'))
+              ],
+            );
+          }).then((value) {
+        if (value) {
+          customer.due = customer.total - customer.paid;
+          if (scheduledDate != null)
+            customer.schedulePay =
+                DateFormat('dd-MM-yyyy').format(scheduledDate);
+          _form.currentState.reset();
+          obj.callListner();
+          Navigator.of(context).pop();
+        }
+      });
     }
   }
 

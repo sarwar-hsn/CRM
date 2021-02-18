@@ -55,9 +55,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
             Text(
               'due: ' + customer.due.toString(),
             ),
-            (customer.schedulePay.isEmpty)
-                ? Text('schedule payment day : __')
-                : Text('schedule payment day : ' + customer.schedulePay)
+            if (customer.schedulePay != null)
+              Text('schedule payment day : ' + customer.schedulePay)
           ],
         ),
       ),
@@ -80,10 +79,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     bool isValid = _customerForm.currentState.validate();
     if (isValid) {
       _customerForm.currentState.save();
-      (scheduledDate == null)
-          ? customer.schedulePay = 'Scheduled Pay : ___'
-          : customer.schedulePay =
-              DateFormat('dd-MM-yyyy').format(scheduledDate);
+      if (scheduledDate != null)
+        customer.schedulePay = DateFormat('dd-MM-yyyy').format(scheduledDate);
+      else
+        customer.schedulePay = null;
       PurchasedDate tempPurchasedDate = new PurchasedDate(
           date: DateFormat('dd-MM-yyyy').format(customerProductDate),
           products: List.from(pickedItems));
@@ -144,14 +143,16 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
           }
           setState(() {
             isLoading = false;
+          });
+        } else {
+          setState(() {
             scheduledDate = null;
             customerProductDate = DateTime.now();
             pickedItems.clear();
           });
+          _customerForm.currentState.reset();
         }
       });
-
-      _customerForm.currentState.reset();
     }
   }
 

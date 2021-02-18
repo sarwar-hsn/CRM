@@ -96,6 +96,27 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     }
   }
 
+  Future<void> updateCustomer(Customer customer) async {
+    var url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
+    try {
+      var response = await http.patch(url,
+          body: json.encode({
+            'name': customer.name,
+            'mobile': customer.mobile,
+            'address': customer.address,
+            'total': customer.total,
+            'paid': customer.paid,
+            'schedulePay': customer.schedulePay,
+          }));
+      if (response.statusCode != 200) {
+        throw response.statusCode;
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<void> updateCustomerPayment(Customer customer) async {
     var url =
         'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
