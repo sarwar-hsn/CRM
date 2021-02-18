@@ -15,6 +15,7 @@ class UpdatePayment extends StatefulWidget {
 }
 
 class _UpdatePaymentState extends State<UpdatePayment> {
+  bool isLoading = false;
   final _form = GlobalKey<FormState>();
   double amount = 0;
 
@@ -26,57 +27,114 @@ class _UpdatePaymentState extends State<UpdatePayment> {
       appBar: AppBar(
         title: Text('Update Payment'),
       ),
-      body: Center(
-        child: Container(
-            height: 200,
-            width: 300,
-            child: Form(
-              key: _form,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TextFormField(
-                    style: TextStyle(),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Field is empty';
-                      } else if (double.tryParse(value) == null) {
-                        return 'only numbers';
-                      } else if (double.parse(value) < 0) {
-                        return 'negetive number not allowed';
-                      } else if (double.parse(value) > customer.due) {
-                        return 'payment is more than due';
-                      } else
-                        return null;
-                    },
-                    decoration: getInputDesign('amount'),
-                    onSaved: (value) {
-                      setState(() {
-                        amount = double.parse(value);
-                      });
-                    },
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        if (_form.currentState.validate()) {
-                          _form.currentState.save();
-                          customer.paid += amount;
-                          customer.due -= amount;
-                          if (amount != 0)
-                            customer.paymentDate.add({
-                              'date': DateFormat('dd-MM-yyyy')
-                                  .format(DateTime.now()),
-                              'paid': amount
+      body: (isLoading)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Center(
+              child: Container(
+                  height: 200,
+                  width: 300,
+                  child: Form(
+                    key: _form,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextFormField(
+                          style: TextStyle(),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Field is empty';
+                            } else if (double.tryParse(value) == null) {
+                              return 'only numbers';
+                            } else if (double.parse(value) < 0) {
+                              return 'negetive number not allowed';
+                            } else if (double.parse(value) > customer.due) {
+                              return 'payment is more than due';
+                            } else
+                              return null;
+                          },
+                          decoration: getInputDesign('amount'),
+                          onSaved: (value) {
+                            setState(() {
+                              amount = double.parse(value);
                             });
-                          obj.callListner();
-                          _form.currentState.reset();
-                        }
-                      },
-                      child: Text('ADD PAYMENT'))
-                ],
-              ),
-            )),
-      ),
+                          },
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              if (_form.currentState.validate()) {
+                                _form.currentState.save();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: Text(
+                                          'new payment : ' + amount.toString()),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, true);
+                                            },
+                                            child: Text('Confirm')),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                            },
+                                            child: Text('Cancel'))
+                                      ],
+                                    );
+                                  },
+                                ).then((value) async {
+                                  if (value) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    customer.paid += amount;
+                                    customer.due -= amount;
+                                    if (amount != 0) {
+                                      customer.paymentDate.add({
+                                        'date': DateFormat('dd-MM-yyyy')
+                                            .format(DateTime.now()),
+                                        'paid': amount
+                                      });
+                                    }
+                                    try {
+                                      await Provider.of<Customers>(context,
+                                              listen: false)
+                                          .updateCustomerPayment(customer);
+                                    } catch (e) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              content: Text(
+                                                  'Something went wrong !!!'),
+                                              actions: [
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('okay'))
+                                              ],
+                                            );
+                                          });
+                                    }
+
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
+                                });
+                              }
+                              _form.currentState.reset();
+                            },
+                            child: Text('ADD PAYMENT'))
+                      ],
+                    ),
+                  )),
+            ),
     );
   }
 }
