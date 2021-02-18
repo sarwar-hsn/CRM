@@ -121,7 +121,6 @@ class _UpdatePaymentState extends State<UpdatePayment> {
                                             );
                                           });
                                     }
-
                                     setState(() {
                                       isLoading = false;
                                     });
