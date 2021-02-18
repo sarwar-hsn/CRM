@@ -96,7 +96,7 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     }
   }
 
-  Future<void> updateCustomer(Customer customer) async {
+  Future<void> editCustomer(Customer customer) async {
     var url =
         'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
     try {
@@ -109,12 +109,11 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
             'paid': customer.paid,
             'schedulePay': customer.schedulePay,
           }));
-      if (response.statusCode != 200) {
-        throw response.statusCode;
-      }
+      if (response.statusCode != 200) throw Exception();
     } catch (e) {
       throw e;
     }
+    notifyListeners();
   }
 
   Future<void> updateCustomerPayment(Customer customer) async {
@@ -127,8 +126,8 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
             'paid': customer.paid,
             'paymentDate': customer.paymentDate,
           }));
-      if (response.statusCode != 200) throw response.statusCode;
       notifyListeners();
+      if (response.statusCode != 200) throw response.statusCode;
     } catch (e) {
       throw e;
     }

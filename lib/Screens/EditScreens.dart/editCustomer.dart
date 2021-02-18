@@ -15,6 +15,7 @@ class EditCustomerScreen extends StatefulWidget {
 }
 
 class _EditCustomerScreenState extends State<EditCustomerScreen> {
+  bool isLoading = false;
   final _form = GlobalKey<FormState>();
   DateTime scheduledDate;
 
@@ -26,6 +27,29 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
           context: context,
           builder: (context) {
             return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              title: Text('Edited Customer Overview'),
+              content: Container(
+                height: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('name: ' + customer.name),
+                    Text('mobile: ' + customer.mobile),
+                    Text('address: ' + customer.address),
+                    Text('total: ' + customer.total.toString()),
+                    Text('paid: ' + customer.paid.toString()),
+                    Text(
+                      'due: ' + customer.due.toString(),
+                    ),
+                    if (scheduledDate != null)
+                      Text('schedule payment day : ' +
+                          DateFormat('dd-MM-yyyy').format(scheduledDate))
+                  ],
+                ),
+              ),
               actions: [
                 ElevatedButton(
                     onPressed: () {
@@ -39,15 +63,36 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
                     child: Text('cancel'))
               ],
             );
-          }).then((value) {
+          }).then((value) async {
         if (value) {
           customer.due = customer.total - customer.paid;
           if (scheduledDate != null)
             customer.schedulePay =
                 DateFormat('dd-MM-yyyy').format(scheduledDate);
-          _form.currentState.reset();
-          obj.callListner();
-          Navigator.of(context).pop();
+          setState(() {
+            isLoading = true;
+          });
+          try {
+            await obj.editCustomer(customer);
+          } catch (e) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text('something went wrong !!!'),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('okay'))
+                    ],
+                  );
+                });
+          }
+          setState(() {
+            isLoading = false;
+          });
         }
       });
     }
@@ -143,140 +188,145 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
       appBar: AppBar(
         title: Text('Edit Customer'),
       ),
-      body: Center(
-        child: Container(
-          height: mediaQuery.height * .7,
-          width: mediaQuery.width * .4,
-          child: Form(
-            key: _form,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Row(
-                    children: [
-                      Container(width: 150, child: Text('Name : ')),
-                      Expanded(
-                        child: TextFormField(
-                          initialValue: customer.name,
-                          validator: (value) {
-                            return _stringValidator(value);
-                          },
-                          decoration: getInputDesign('name'),
-                          onSaved: (value) {
-                            customer.name = value;
-                          },
+      body: (isLoading)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Center(
+              child: Container(
+                height: mediaQuery.height * .7,
+                width: mediaQuery.width * .4,
+                child: Form(
+                  key: _form,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Row(
+                          children: [
+                            Container(width: 150, child: Text('Name : ')),
+                            Expanded(
+                              child: TextFormField(
+                                initialValue: customer.name,
+                                validator: (value) {
+                                  return _stringValidator(value);
+                                },
+                                decoration: getInputDesign('name'),
+                                onSaved: (value) {
+                                  customer.name = value;
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(width: 150, child: Text('Phone number : ')),
-                      Expanded(
-                        child: TextFormField(
-                          initialValue: customer.mobile,
-                          decoration: getInputDesign('Phone number'),
-                          validator: (value) {
-                            if (int.tryParse(value) != null &&
-                                value.length == 11) {
-                              return null;
-                            }
-                            return 'Invalid number';
-                          },
-                          onSaved: (value) {
-                            customer.mobile = value;
-                          },
+                        Row(
+                          children: [
+                            Container(
+                                width: 150, child: Text('Phone number : ')),
+                            Expanded(
+                              child: TextFormField(
+                                initialValue: customer.mobile,
+                                decoration: getInputDesign('Phone number'),
+                                validator: (value) {
+                                  if (int.tryParse(value) != null &&
+                                      value.length == 11) {
+                                    return null;
+                                  }
+                                  return 'Invalid number';
+                                },
+                                onSaved: (value) {
+                                  customer.mobile = value;
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(width: 150, child: Text('Address : ')),
-                      Expanded(
-                        child: TextFormField(
-                          initialValue: customer.address,
-                          decoration: getInputDesign('address'),
-                          onSaved: (value) {
-                            customer.address = value;
-                          },
-                          validator: (value) {
-                            return _stringValidator(value);
-                          },
+                        Row(
+                          children: [
+                            Container(width: 150, child: Text('Address : ')),
+                            Expanded(
+                              child: TextFormField(
+                                initialValue: customer.address,
+                                decoration: getInputDesign('address'),
+                                onSaved: (value) {
+                                  customer.address = value;
+                                },
+                                validator: (value) {
+                                  return _stringValidator(value);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(width: 150, child: Text('Total : ')),
-                      Expanded(
-                        child: TextFormField(
-                          initialValue: customer.total.toString(),
-                          decoration: getInputDesign('total amount'),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'field is empty';
-                            } else if (double.tryParse(value) == null) {
-                              return 'only numbers are allowed';
-                            } else if (double.parse(value) < 0) {
-                              return 'negetive numbers not allowed';
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: (value) {
-                            customer.total = double.parse(value);
-                          },
+                        Row(
+                          children: [
+                            Container(width: 150, child: Text('Total : ')),
+                            Expanded(
+                              child: TextFormField(
+                                initialValue: customer.total.toString(),
+                                decoration: getInputDesign('total amount'),
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'field is empty';
+                                  } else if (double.tryParse(value) == null) {
+                                    return 'only numbers are allowed';
+                                  } else if (double.parse(value) < 0) {
+                                    return 'negetive numbers not allowed';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onSaved: (value) {
+                                  customer.total = double.parse(value);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(width: 150, child: Text('Paid : ')),
-                      Expanded(
-                        child: TextFormField(
-                          initialValue: customer.paid.toString(),
-                          decoration: getInputDesign('paid amount'),
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'field is empty';
-                            } else if (double.tryParse(value) == null) {
-                              return 'only numbers are allowed';
-                            } else if (double.parse(value) < 0) {
-                              return 'negetive numbers not allowed';
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: (value) {
-                            customer.paid = double.parse(value);
-                          },
+                        Row(
+                          children: [
+                            Container(width: 150, child: Text('Paid : ')),
+                            Expanded(
+                              child: TextFormField(
+                                initialValue: customer.paid.toString(),
+                                decoration: getInputDesign('paid amount'),
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'field is empty';
+                                  } else if (double.tryParse(value) == null) {
+                                    return 'only numbers are allowed';
+                                  } else if (double.parse(value) < 0) {
+                                    return 'negetive numbers not allowed';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onSaved: (value) {
+                                  customer.paid = double.parse(value);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        dateContainer(context, _pickDateforSchedule,
+                            'scheduled date', customer.id),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  _updateCustomer(context, customer, obj);
+                                },
+                                child: Text('SUBMIT'))
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                  dateContainer(context, _pickDateforSchedule, 'scheduled date',
-                      customer.id),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            _updateCustomer(context, customer, obj);
-                          },
-                          child: Text('SUBMIT'))
-                    ],
-                  )
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
