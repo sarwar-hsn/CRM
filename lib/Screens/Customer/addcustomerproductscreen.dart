@@ -32,34 +32,63 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
   void _updateCustomer(Customer customer, Customers obj) {
     if (_updateForm.currentState.validate()) {
       _updateForm.currentState.save();
-      customer.paid += amountPaid;
-      customer.total += customerProduct.total;
-      customer.due = customer.total - customer.paid;
-      for (int i = 0; i < customer.products.length; i++) {
-        if (customer.products[i].date ==
-            DateFormat('dd-MM-yyyy').format(customerProductDate)) {
-          for (int j = 0; j < pickedItems.length; j++) {
-            customer.products[i].products.add(pickedItems[j]);
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: Text('confirm')),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                    child: Text('cancel'))
+              ],
+            );
+          }).then((value) async {
+        if (value) {
+          customer.paid += amountPaid;
+          customer.total += customerProduct.total;
+          customer.due = customer.total - customer.paid;
+          for (int i = 0; i < customer.products.length; i++) {
+            if (customer.products[i].date ==
+                DateFormat('dd-MM-yyyy').format(customerProductDate)) {
+              for (int j = 0; j < pickedItems.length; j++) {
+                customer.products[i].products.add(pickedItems[j]);
+              }
+
+              if (amountPaid != 0)
+                customer.paymentDate.add({
+                  'date': DateFormat('dd-MM-yyyy').format(customerProductDate),
+                  'paid': amountPaid
+                });
+
+              await obj.addCustomerProduct(customer); //products for same date
+
+              Navigator.of(context).pop();
+              return;
+            }
           }
+          customer.products.add(new PurchasedDate(
+              date: DateFormat('dd-MM-yyyy').format(customerProductDate),
+              products: List.from(pickedItems)));
+          _updateForm.currentState.reset();
 
           if (amountPaid != 0)
-            customer.paymentDate
-                .add({'date': customerProductDate, 'paid': amountPaid});
-          obj.callListner();
-          Navigator.of(context).pop();
-          return;
-        }
-      }
-      customer.products.add(new PurchasedDate(
-          date: DateFormat('dd-MM-yyyy').format(customerProductDate),
-          products: List.from(pickedItems)));
-      _updateForm.currentState.reset();
+            customer.paymentDate.add({
+              'date': DateFormat('dd-MM-yyyy').format(customerProductDate),
+              'paid': amountPaid
+            });
 
-      if (amountPaid != 0)
-        customer.paymentDate
-            .add({'date': customerProductDate, 'paid': amountPaid});
-      obj.callListner();
-      Navigator.of(context).pop();
+          await obj.addCustomerProduct(customer); //products for different day
+          Navigator.of(context).pop();
+        }
+      });
     }
   }
 

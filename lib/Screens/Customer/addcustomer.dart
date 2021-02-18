@@ -143,14 +143,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
           }
           setState(() {
             isLoading = false;
-          });
-        } else {
-          setState(() {
             scheduledDate = null;
             customerProductDate = DateTime.now();
             pickedItems.clear();
           });
-          _customerForm.currentState.reset();
         }
       });
     }
