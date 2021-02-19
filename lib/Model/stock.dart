@@ -1,3 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+part 'stock.g.dart';
+
+@JsonSerializable()
 class Stock {
   String id;
   String companyName;
@@ -21,4 +25,6 @@ class Stock {
       this.totalUnit: 0,
       this.extraFee: 0,
       this.unitPrice: 0});
+  factory Stock.fromJson(Map<String, dynamic> data) => _$StockFromJson(data);
+  Map<String, dynamic> toJson() => _$StockToJson(this);
 }

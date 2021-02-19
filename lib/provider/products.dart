@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import '../Model/Product.dart';
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
   List<Product> _products = [
@@ -55,15 +58,27 @@ class Products with ChangeNotifier {
         availableAmount: 30),
   ];
 
-  List<String> _categories = ['rod', 'balu', 'cement', 'animal'];
+  List<String> _categories = [];
 
-  void addCategory(String name) {
+  Future<void> addCategory(String name) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/categories.json';
     for (int i = 0; i < categories.length; i++) {
       if (_categories[i] == name) {
         return;
       }
     }
-    _categories.add(name);
+    try {
+      var response =
+          await http.post(url, body: json.encode({'category': name}));
+      if (response.statusCode == 200) {
+        _categories.add(name);
+      } else
+        throw response.statusCode;
+    } catch (e) {
+      throw e;
+    }
+
     notifyListeners();
   }
 
