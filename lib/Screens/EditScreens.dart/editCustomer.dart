@@ -22,34 +22,14 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
   void _updateCustomer(BuildContext context, Customer customer, Customers obj) {
     bool isValid = _form.currentState.validate();
     if (isValid) {
-      _form.currentState.save();
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
-              title: Text('Edited Customer Overview'),
-              content: Container(
-                height: 200,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('name: ' + customer.name),
-                    Text('mobile: ' + customer.mobile),
-                    Text('address: ' + customer.address),
-                    Text('total: ' + customer.total.toString()),
-                    Text('paid: ' + customer.paid.toString()),
-                    Text(
-                      'due: ' + customer.due.toString(),
-                    ),
-                    if (scheduledDate != null)
-                      Text('schedule payment day : ' +
-                          DateFormat('dd-MM-yyyy').format(scheduledDate))
-                  ],
-                ),
-              ),
+              title: Text('Edit Customer confirmed ?'),
               actions: [
                 ElevatedButton(
                     onPressed: () {
@@ -65,6 +45,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
             );
           }).then((value) async {
         if (value) {
+          _form.currentState.save();
           customer.due = customer.total - customer.paid;
           if (scheduledDate != null)
             customer.schedulePay =

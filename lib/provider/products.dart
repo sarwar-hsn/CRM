@@ -144,6 +144,24 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> editProduct(Product product) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/products/${product.id}.json';
+    try {
+      var response = await http.patch(url,
+          body: json.encode({
+            'name': product.name,
+            'unitPrice': product.unitPrice,
+            'unitName': product.unitName,
+            'availableAmount': product.availableAmount,
+          }));
+      if (response.statusCode != 200) throw response.statusCode;
+    } catch (e) {
+      throw e;
+    }
+    notifyListeners();
+  }
+
   int getIndexById(String id) {
     for (int i = 0; i < _products.length; i++) {
       if (_products[i].id == id) return i;
