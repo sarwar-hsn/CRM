@@ -120,8 +120,27 @@ class Products with ChangeNotifier {
     return false;
   }
 
-  void addProduct(Product obj) {
-    _products.add(obj);
+  Future<void> addProduct(Product obj) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/products.json';
+    try {
+      var response = await http.post(url,
+          body: json.encode({
+            'name': obj.name,
+            'unitPrice': obj.unitPrice,
+            'unitName': obj.unitName,
+            'availableAmount': obj.availableAmount,
+            'category': obj.category,
+          }));
+      if (response.statusCode == 200) {
+        obj.id = json.decode(response.body)['name'];
+        _products.add(obj);
+      } else
+        throw response.statusCode;
+    } catch (e) {
+      throw e;
+    }
+
     notifyListeners();
   }
 
