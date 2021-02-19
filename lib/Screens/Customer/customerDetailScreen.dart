@@ -24,6 +24,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final customerId = ModalRoute.of(context).settings.arguments;
+    // print(customerId);
     Customer customer =
         Provider.of<Customers>(context).getCustomerById(customerId);
     final mediaQuery = MediaQuery.of(context).size;

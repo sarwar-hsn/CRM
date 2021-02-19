@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:manage/Model/Customer.dart';
 import 'package:manage/Model/CustomerProduct.dart';
 import 'package:manage/Model/PurchasedDate.dart';
 import 'package:intl/intl.dart';
 
 class CustomerProductDetail extends StatelessWidget {
   final mediaQuery;
-  final customer;
+  final Customer customer;
   CustomerProductDetail({this.mediaQuery, this.customer});
 
   @override
@@ -14,7 +15,7 @@ class CustomerProductDetail extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
           height: mediaQuery.height * .5 - AppBar().preferredSize.height,
-          child: (customer.products.isEmpty)
+          child: (customer.products == null || customer.products.length == 0)
               ? Text('Customer has no products')
               : ListView.builder(
                   itemCount: customer.products.length,

@@ -94,9 +94,15 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteProduct({String id}) {
+  Future<void> deleteProduct({String id}) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/products/$id.json';
     int index = getIndexById(id);
     if (index != -1) {
+      var response = await http.delete(url);
+
+      print(response.statusCode);
+
       _products.removeAt(index);
     }
     notifyListeners();

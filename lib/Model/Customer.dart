@@ -11,9 +11,9 @@ class Customer {
   double paid;
   double due;
   String address;
-  List<Map<String, Object>> paymentDate = [];
+  List<Map<String, Object>> paymentDate;
   String schedulePay;
-  List<PurchasedDate> products = [];
+  List<PurchasedDate> products;
   Customer({
     this.id,
     this.name,
@@ -23,6 +23,8 @@ class Customer {
     this.schedulePay,
     this.due: 0,
     this.total: 0,
+    this.paymentDate,
+    this.products,
   });
 
   factory Customer.fromJson(Map<String, dynamic> data) =>

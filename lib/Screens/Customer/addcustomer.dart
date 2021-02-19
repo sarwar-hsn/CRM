@@ -94,37 +94,56 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       //due
       double due = total - customer.paid;
 
-      //calculate due
-      Customer tempCustomer = new Customer(
-        address: customer.address,
-        due: due,
-        mobile: customer.mobile,
-        name: customer.name,
-        paid: customer.paid,
-        schedulePay: customer.schedulePay,
-        total: total,
-      );
+      customer.due = due;
+      customer.total = total;
 
-      tempCustomer.products.add(tempPurchasedDate);
-      tempCustomer.id = Uuid().v1();
-      if (tempCustomer.paid != 0)
-        tempCustomer.paymentDate.add({
-          'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          'paid': tempCustomer.paid
-        });
+      if (tempPurchasedDate.products.length == 0) {
+        customer.products = [
+          new PurchasedDate(date: 'NOT SPECIFIED', products: [
+            CustomerProduct(
+                id: 'not specified',
+                productName: 'not specified',
+                total: 0,
+                unitName: 'not specified',
+                unitPrice: 0,
+                unitPurchased: 0),
+          ])
+        ];
+      } else
+        customer.products = [tempPurchasedDate];
+      customer.id = Uuid().v1();
+      if (customer.paid != 0) {
+        customer.paymentDate = [
+          {
+            'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
+            'paid': customer.paid
+          }
+        ];
+      }
+      // customer.paymentDate.add();
 
       showDialog(
           barrierDismissible: false,
           context: context,
           builder: (context) {
-            return getAlertDialog(obj, tempCustomer);
+            return getAlertDialog(obj, customer);
           }).then((value) async {
         if (value) {
           setState(() {
             isLoading = true;
           });
           try {
-            await obj.addCustomer(tempCustomer);
+            await obj.addCustomer(new Customer(
+                address: customer.address,
+                due: customer.due,
+                id: customer.id,
+                mobile: customer.mobile,
+                name: customer.name,
+                paid: customer.paid,
+                paymentDate: customer.paymentDate,
+                products: customer.products,
+                schedulePay: customer.schedulePay,
+                total: customer.total));
           } catch (e) {
             showDialog(
                 context: context,

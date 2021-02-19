@@ -87,7 +87,14 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
               isLoading = true;
             });
             try {
-              await obj.addProduct(temp);
+              await obj.addProduct(new Product(
+                availableAmount: temp.availableAmount,
+                category: temp.category,
+                id: temp.id,
+                name: temp.name,
+                unitName: temp.unitName,
+                unitPrice: temp.unitPrice,
+              ));
             } catch (e) {
               showDialog(
                   context: context,
