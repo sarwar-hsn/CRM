@@ -7,8 +7,20 @@ import 'package:manage/Screens/Stock/updatestockpayment.dart';
 import 'package:manage/provider/stockdata.dart';
 import 'package:provider/provider.dart';
 
-class StockDetailScreen extends StatelessWidget {
+class StockDetailScreen extends StatefulWidget {
   static const routeName = '/StockDetailScreen';
+
+  @override
+  _StockDetailScreenState createState() => _StockDetailScreenState();
+}
+
+class _StockDetailScreenState extends State<StockDetailScreen> {
+  void _aciveHandler(Stock stock) {
+    setState(() {
+      stock.isActive = !stock.isActive;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     String stockId = ModalRoute.of(context).settings.arguments;
@@ -77,6 +89,24 @@ class StockDetailScreen extends StatelessWidget {
                                           SizedBox(
                                             width: 10,
                                           ),
+                                          ElevatedButton(
+                                            child: (stock.isActive)
+                                                ? Text(
+                                                    'Deactive',
+                                                    style: TextStyle(
+                                                        color:
+                                                            Colors.redAccent),
+                                                  )
+                                                : Text(
+                                                    'Active',
+                                                    style: TextStyle(
+                                                        color:
+                                                            Colors.greenAccent),
+                                                  ),
+                                            onPressed: () {
+                                              _aciveHandler(stock);
+                                            },
+                                          ),
                                         ]),
                                   ),
                                   Padding(
@@ -95,9 +125,7 @@ class StockDetailScreen extends StatelessWidget {
                                                   stock.companyName),
                                               Text('Product Name : ' +
                                                   stock.productName),
-                                              Text('Date  : ' +
-                                                  DateFormat('dd-MM-yyyy')
-                                                      .format(stock.date))
+                                              Text('Date  : ' + stock.date)
                                             ],
                                           ),
                                         ),
@@ -140,11 +168,8 @@ class StockDetailScreen extends StatelessWidget {
                                           }
                                           index -= 1;
                                           return Text('Date : ' +
-                                              DateFormat('dd-MM-yyyy')
-                                                  .format(stock
-                                                          .paymentHistory[index]
-                                                      ['date'])
-                                                  .toString() +
+                                              stock.paymentHistory[index]
+                                                  ['date'] +
                                               '     Amount paid : ' +
                                               stock.paymentHistory[index]
                                                       ['payment']

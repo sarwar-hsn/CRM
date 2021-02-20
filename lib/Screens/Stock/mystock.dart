@@ -4,22 +4,33 @@ import 'package:manage/Screens/Stock/stockdetail.dart';
 import 'package:manage/provider/stockdata.dart';
 import 'package:provider/provider.dart';
 
-class MyStockScreen extends StatelessWidget {
+import '../../provider/stockdata.dart';
+
+class MyStockScreen extends StatefulWidget {
   static const routeName = '/MyStockScreen';
+
+  @override
+  _MyStockScreenState createState() => _MyStockScreenState();
+}
+
+class _MyStockScreenState extends State<MyStockScreen> {
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     StockData stockData = Provider.of<StockData>(context);
-    List<Stock> stocks = stockData.stocks;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('My Stocks'),
-      ),
-      body: (stocks.isEmpty)
-          ? Center(
-              child: Text('nothing found in your stock'),
-            )
-          : Center(child: displayStock(context, stocks)),
-    );
+        appBar: AppBar(
+          title: Text('My Stocks'),
+        ),
+        body: FutureBuilder(
+          future: stockData.fetchAndSetStock(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Center(child: displayStock(context, snapshot.data));
+            }
+            return Center(child: CircularProgressIndicator());
+          },
+        ));
   }
 }
 
@@ -44,6 +55,7 @@ Container displayStock(BuildContext context, List<Stock> stocks) {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Expanded(child: Text('Date')),
                     Expanded(child: Text('companyName')),
                     Expanded(child: Text('productName')),
                     Expanded(child: Text('totalCost')),
@@ -71,6 +83,7 @@ Container displayStock(BuildContext context, List<Stock> stocks) {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Expanded(child: Text(stocks[index].date)),
                   Expanded(child: Text(stocks[index].companyName)),
                   Expanded(child: Text(stocks[index].productName)),
                   Expanded(child: Text(stocks[index].totalCost.toString())),

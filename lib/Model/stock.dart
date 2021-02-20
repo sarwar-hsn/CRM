@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'stock.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Stock {
   String id;
   String companyName;
@@ -12,8 +12,9 @@ class Stock {
   double paid;
   double due;
   double extraFee;
-  DateTime date;
-  List<Map<String, Object>> paymentHistory = [];
+  String date;
+  List<Map<String, Object>> paymentHistory;
+  bool isActive = true;
   Stock(
       {this.date,
       this.companyName,
@@ -24,7 +25,9 @@ class Stock {
       this.totalCost: 0,
       this.totalUnit: 0,
       this.extraFee: 0,
-      this.unitPrice: 0});
+      this.unitPrice: 0,
+      this.paymentHistory,
+      this.isActive});
   factory Stock.fromJson(Map<String, dynamic> data) => _$StockFromJson(data);
   Map<String, dynamic> toJson() => _$StockToJson(this);
 }

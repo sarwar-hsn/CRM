@@ -105,9 +105,7 @@ Map<String, Object> listofCustomerandTotalByDate(
   }
   for (int i = 0; i < temp.length; i++) {
     for (int j = 0; j < temp[i].paymentDate.length; j++) {
-      if (DateFormat('dd-MM-yyyy')
-              .format(temp[i].paymentDate[j]['date'])
-              .toString() ==
+      if (temp[i].paymentDate[j]['date'] ==
           DateFormat('dd-MM-yyyy').format(date).toString()) {
         deposite += temp[i].paymentDate[j]['paid'];
       }

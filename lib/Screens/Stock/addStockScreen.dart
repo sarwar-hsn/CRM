@@ -5,6 +5,8 @@ import 'package:manage/provider/stockdata.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../Model/stock.dart';
+
 class AddToStockScreen extends StatefulWidget {
   static const routeName = '/AddToStockScreen';
 
@@ -87,18 +89,60 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
   void _saveStock(StockData stocks) {
     if (_form.currentState.validate()) {
       _form.currentState.save();
-      tempStock.totalCost = tempStock.unitPrice * tempStock.totalUnit;
-      tempStock.due = tempStock.totalCost - tempStock.paid;
-      tempStock.companyName = dropDownValue;
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: Text('confirm')),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                    child: Text('cancel'))
+              ],
+            );
+          }).then((value) {
+        if (value) {
+          tempStock.totalCost =
+              tempStock.unitPrice * tempStock.totalUnit + tempStock.extraFee;
+          tempStock.due = tempStock.totalCost - tempStock.paid;
+          tempStock.companyName = dropDownValue;
 
-      Stock finalStock = deepCopyStock(tempStock);
-      finalStock.id = Uuid().v1();
-      finalStock.date = date;
-      if (finalStock.paid != 0)
-        finalStock.paymentHistory
-            .add({'date': date, 'payment': tempStock.paid});
+          // Stock finalStock = deepCopyStock(tempStock);
+          tempStock.id = Uuid().v1();
+          tempStock.date = DateFormat('dd-MM-yyyy').format(date);
+          if (dropDownValue == null)
+            tempStock.companyName = 'Unknown';
+          else
+            tempStock.companyName = dropDownValue;
+          tempStock.paymentHistory = [
+            {
+              'date': DateFormat('dd-MM-yyyy').format(date),
+              'payment': tempStock.paid
+            }
+          ];
 
-      stocks.addStock(finalStock);
+          stocks.addStock(new Stock(
+              companyName: tempStock.companyName,
+              date: tempStock.date,
+              due: tempStock.due,
+              extraFee: tempStock.extraFee,
+              id: tempStock.id,
+              paid: tempStock.paid,
+              productName: tempStock.productName,
+              totalCost: tempStock.totalCost,
+              totalUnit: tempStock.totalUnit,
+              unitPrice: tempStock.unitPrice,
+              paymentHistory: tempStock.paymentHistory,
+              isActive: true));
+        }
+      });
 
       _form.currentState.reset();
       setState(() {

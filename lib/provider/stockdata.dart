@@ -1,19 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:manage/Model/stock.dart';
+import 'package:http/http.dart' as http;
 
 class StockData with ChangeNotifier {
-  List<Stock> _stocks = [
-    new Stock(
-        date: DateTime.now(),
-        totalUnit: 100,
-        totalCost: 1000,
-        unitPrice: 10,
-        due: 500,
-        paid: 500,
-        productName: 'cement',
-        companyName: 'BDgrps',
-        id: DateTime.now().toIso8601String()),
-  ];
+  List<Stock> _stocks = [];
   List<String> _companies = ['BDgrps'];
 
   List<String> get companies {
@@ -29,8 +22,29 @@ class StockData with ChangeNotifier {
     return [..._stocks];
   }
 
-  void addStock(Stock newStock) {
-    _stocks.add(newStock);
+  Future<void> addStock(Stock newStock) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/stocks.json';
+    var response = await http.post(url,
+        body: json.encode({
+          'companyName': newStock.companyName,
+          'productName': newStock.productName,
+          'totalUnit': newStock.totalUnit,
+          'unitPrice': newStock.unitPrice,
+          'totalCost': newStock.totalCost,
+          'paid': newStock.paid,
+          'due': newStock.due,
+          'extraFee': newStock.extraFee,
+          'date': newStock.date,
+          'paymentHistory': newStock.paymentHistory,
+          'isActive': newStock.isActive,
+        }));
+    if (response.statusCode == 200) {
+      newStock.id = json.decode(response.body)['name'];
+      print(newStock.id);
+      _stocks.add(newStock);
+    }
+
     notifyListeners();
   }
 
@@ -58,6 +72,22 @@ class StockData with ChangeNotifier {
       if (_stocks[i].id == id) return i;
     }
     return -1;
+  }
+
+  Future<List<Stock>> fetchAndSetStock() async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/stocks.json';
+    var response = await http.get(url);
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    List<Stock> loadedStocks = [];
+    extractedData.forEach((stockId, stockData) {
+      Stock temp = Stock.fromJson(stockData);
+      temp.id = stockId;
+      loadedStocks.add(temp);
+    });
+    _stocks = loadedStocks;
+    notifyListeners();
+    return loadedStocks;
   }
 
   void callListerner() {

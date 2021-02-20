@@ -53,7 +53,7 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     }
     for (int i = 0; i < customer.paymentDate.length; i++) {
       if (DateFormat('dd-MM-yyyy').format(date) ==
-          DateFormat('dd-MM-yyyy').format(customer.paymentDate[i]['date'])) {
+          customer.paymentDate[i]['date']) {
         paid += customer.paymentDate[i]['paid'];
       }
     }
