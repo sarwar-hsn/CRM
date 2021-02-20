@@ -24,7 +24,6 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final customerId = ModalRoute.of(context).settings.arguments;
-    // print(customerId);
     Customer customer =
         Provider.of<Customers>(context).getCustomerById(customerId);
     final mediaQuery = MediaQuery.of(context).size;
@@ -157,7 +156,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                               Container(
                                 height: 200,
                                 width: 400,
-                                child: (customer.paymentDate.length == 0)
+                                child: (customer.paymentDate == null)
                                     ? Text(
                                         'No payment yet',
                                         style: TextStyle(

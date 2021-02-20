@@ -119,6 +119,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
             'paid': customer.paid
           }
         ];
+      } else {
+        customer.paymentDate = [{}];
       }
       // customer.paymentDate.add();
 
@@ -481,11 +483,12 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                   child: TextFormField(
                                     validator: (value) {
                                       String temp = _doubleValidator(value);
-                                      if (temp == null) {
-                                        customerProduct.unitPrice =
-                                            double.parse(value);
-                                      }
+
                                       return temp;
+                                    },
+                                    onSaved: (value) {
+                                      customerProduct.unitPrice =
+                                          double.parse(value);
                                     },
                                     decoration: (dropDownValueProducts == null)
                                         ? getInputDesign('unit price')
@@ -521,10 +524,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                         decoration: getInputDesign('paid amount'),
                         validator: (value) {
                           String temp = _doubleValidator(value);
-                          if (temp == null) {
-                            customer.paid = double.parse(value);
-                          }
                           return temp;
+                        },
+                        onSaved: (value) {
+                          customer.paid = double.parse(value);
                         },
                       ),
                       dateContainer(

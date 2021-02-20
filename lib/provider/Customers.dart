@@ -81,7 +81,7 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
             'paid': newCustomer.paid,
             'due': newCustomer.due,
             'products': newCustomer.products,
-            'schdulePay': newCustomer.schedulePay,
+            'schedulePay': newCustomer.schedulePay,
             'address': newCustomer.address,
             'paymentDate': newCustomer.paymentDate
           }));
