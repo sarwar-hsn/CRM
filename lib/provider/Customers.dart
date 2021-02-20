@@ -107,6 +107,7 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
             'address': customer.address,
             'total': customer.total,
             'paid': customer.paid,
+            'due': customer.due,
             'schedulePay': customer.schedulePay,
           }));
       if (response.statusCode != 200) throw Exception();

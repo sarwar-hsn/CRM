@@ -112,16 +112,16 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       } else
         customer.products = [tempPurchasedDate];
       customer.id = Uuid().v1();
-      if (customer.paid != 0) {
-        customer.paymentDate = [
-          {
-            'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            'paid': customer.paid
-          }
-        ];
-      } else {
-        customer.paymentDate = [{}];
-      }
+      // if (customer.paid != 0) {
+      customer.paymentDate = [
+        {
+          'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          'paid': customer.paid
+        }
+      ];
+      // } else {
+      //   customer.paymentDate = [{}];
+      // }
       // customer.paymentDate.add();
 
       showDialog(
