@@ -32,6 +32,14 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   }
 
   @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<Customers>(context, listen: false).fetCustomers();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -84,7 +92,6 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
 Map<String, Object> listofCustomerandTotalByDate(
     DateTime date, List<Customer> customer) {
-  print('Date : ' + DateFormat('dd-MM-yyyy').format(date).toString());
   List<Customer> temp = [];
   List<String> id = [];
   double total = 0;
@@ -92,7 +99,6 @@ Map<String, Object> listofCustomerandTotalByDate(
   double due = 0;
   for (int i = 0; i < customer.length; i++) {
     for (int j = 0; j < customer[i].products.length; j++) {
-      print('customer purchase Date : ' + customer[i].products[j].date);
       if (customer[i].products[j].date ==
           DateFormat('dd-MM-yyyy').format(date).toString()) {
         id.add(customer[i].id);

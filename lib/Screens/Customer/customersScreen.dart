@@ -3,7 +3,7 @@ import 'package:manage/Widgets/CustomerListView.dart';
 import 'package:manage/Screens/Others/mainDrawer.dart';
 import 'package:manage/provider/Customers.dart';
 import 'package:provider/provider.dart';
-import '../../Widgets/searchByName.dart';
+import '../Others/searchByName.dart';
 
 class CustomersScreen extends StatefulWidget {
   static const routeName = '/customerScreen';
@@ -30,7 +30,12 @@ class _CustomersScreenState extends State<CustomersScreen> {
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
-                showSearch(context: context, delegate: Customers());
+                showSearch(
+                    context: context,
+                    delegate: SearchByName(
+                        customers:
+                            Provider.of<Customers>(context, listen: false)
+                                .customers));
               })
         ],
       ),

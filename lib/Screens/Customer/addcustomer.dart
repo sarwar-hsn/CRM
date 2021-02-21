@@ -301,6 +301,16 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   }
 
   @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      Products products = Provider.of<Products>(context, listen: false);
+      products.fetchAndSetCategories();
+      products.fetchAndSetProducts();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     Customers customerObj = Provider.of<Customers>(context);

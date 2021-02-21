@@ -142,16 +142,16 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
       var response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       List<Customer> loadedCustomer = [];
-      List<PurchasedDate> purchasedDate = [];
-      extractedData.forEach((customerId, customerData) {
-        Customer temp = Customer.fromJson(customerData);
-        temp.id = customerId;
-        loadedCustomer.add(temp);
-      });
+      if (extractedData != null)
+        extractedData.forEach((customerId, customerData) {
+          Customer temp = Customer.fromJson(customerData);
+          temp.id = customerId;
+          loadedCustomer.add(temp);
+        });
 
       _customers = loadedCustomer;
     } catch (e) {
-      print('Error' + e.toString());
+      throw e;
     }
     notifyListeners();
   }

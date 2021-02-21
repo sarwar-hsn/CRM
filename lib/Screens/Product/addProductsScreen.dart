@@ -125,6 +125,18 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    FutureBuilder(
+      future:
+          Provider.of<Products>(context, listen: false).fetchAndSetCategories(),
+      builder: (context, snapshot) {
+        return null;
+      },
+    );
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Products products = Provider.of<Products>(context);
     List<String> categories = products.categories;

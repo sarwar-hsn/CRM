@@ -7,68 +7,107 @@ import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
   List<Product> _products = [
-    Product(
-        id: Uuid().v1(),
-        name: 'Fire Rod',
-        unitName: 'kg',
-        unitPrice: 200,
-        category: 'rod',
-        availableAmount: 300),
-    Product(
-        id: Uuid().v4(),
-        name: 'Crown cement',
-        unitName: 'bag',
-        unitPrice: 50,
-        category: 'cement',
-        availableAmount: 500),
-    Product(
-        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
-        name: 'shosta balu',
-        unitName: 'kg',
-        unitPrice: 50,
-        category: 'balu',
-        availableAmount: 5000),
-    Product(
-        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.facebook.com'),
-        name: 'goru',
-        unitName: 'piece',
-        unitPrice: 10000,
-        category: 'animal',
-        availableAmount: 10),
-    Product(
-        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.twitter.com'),
-        name: 'murgi',
-        unitName: 'kg',
-        unitPrice: 350,
-        category: 'animal',
-        availableAmount: 500),
-    Product(
-        id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.instagram.com'),
-        name: 'hash',
-        unitName: 'kg',
-        unitPrice: 50,
-        category: 'animal',
-        availableAmount: 200),
-    Product(
-        id: Uuid().v1(),
-        name: 'vhera',
-        unitName: 'piece',
-        unitPrice: 2000,
-        category: 'animal',
-        availableAmount: 30),
+    // Product(
+    //     id: Uuid().v1(),
+    //     name: 'Fire Rod',
+    //     unitName: 'kg',
+    //     unitPrice: 200,
+    //     category: 'rod',
+    //     availableAmount: 300),
+    // Product(
+    //     id: Uuid().v4(),
+    //     name: 'Crown cement',
+    //     unitName: 'bag',
+    //     unitPrice: 50,
+    //     category: 'cement',
+    //     availableAmount: 500),
+    // Product(
+    //     id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
+    //     name: 'shosta balu',
+    //     unitName: 'kg',
+    //     unitPrice: 50,
+    //     category: 'balu',
+    //     availableAmount: 5000),
+    // Product(
+    //     id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.facebook.com'),
+    //     name: 'goru',
+    //     unitName: 'piece',
+    //     unitPrice: 10000,
+    //     category: 'animal',
+    //     availableAmount: 10),
+    // Product(
+    //     id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.twitter.com'),
+    //     name: 'murgi',
+    //     unitName: 'kg',
+    //     unitPrice: 350,
+    //     category: 'animal',
+    //     availableAmount: 500),
+    // Product(
+    //     id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.instagram.com'),
+    //     name: 'hash',
+    //     unitName: 'kg',
+    //     unitPrice: 50,
+    //     category: 'animal',
+    //     availableAmount: 200),
+    // Product(
+    //     id: Uuid().v1(),
+    //     name: 'vhera',
+    //     unitName: 'piece',
+    //     unitPrice: 2000,
+    //     category: 'animal',
+    //     availableAmount: 30),
   ];
 
   List<String> _categories = [];
 
+  Future<List<String>> fetchAndSetCategories() async {
+    try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/categories.json';
+      var response = await http.get(url);
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      List<String> loadedCategories = [];
+      if (extractedData != null)
+        extractedData.forEach((id, data) {
+          loadedCategories.add(data['category']);
+        });
+      _categories = loadedCategories;
+      notifyListeners();
+      return loadedCategories;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> fetchAndSetProducts() async {
+    try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/products.json';
+      var response = await http.get(url);
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      List<Product> loadedProduct = [];
+      if (extractedData != null)
+        extractedData.forEach((prodId, data) {
+          Product temp = Product.fromJson(data);
+          temp.id = prodId;
+          loadedProduct.add(temp);
+        });
+      _products = loadedProduct;
+    } catch (e) {
+      throw e;
+    }
+    notifyListeners();
+  }
+
   Future<void> addCategory(String name) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/categories.json';
     for (int i = 0; i < categories.length; i++) {
       if (_categories[i] == name) {
         return;
       }
     }
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/categories.json';
       var response =
           await http.post(url, body: json.encode({'category': name}));
       if (response.statusCode == 200) {
@@ -82,29 +121,32 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateProduct(Product temp, int index) {
-    _products.removeAt(index);
-    _products.add(new Product(
-        availableAmount: temp.availableAmount,
-        category: temp.category,
-        id: temp.id,
-        name: temp.name,
-        unitName: temp.unitName,
-        unitPrice: temp.unitPrice));
-    notifyListeners();
-  }
+  // void updateProduct(Product temp, int index) {
+  //   _products.removeAt(index);
+  //   _products.add(new Product(
+  //       availableAmount: temp.availableAmount,
+  //       category: temp.category,
+  //       id: temp.id,
+  //       name: temp.name,
+  //       unitName: temp.unitName,
+  //       unitPrice: temp.unitPrice));
+  //   notifyListeners();
+  // }
 
   Future<void> deleteProduct({String id}) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/products/$id.json';
-    int index = getIndexById(id);
-    if (index != -1) {
-      var response = await http.delete(url);
+    try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/products/$id.json';
+      int index = getIndexById(id);
+      if (index != -1) {
+        var response = await http.delete(url);
 
-      print(response.statusCode);
-
-      _products.removeAt(index);
+        if (response.statusCode == 200) _products.removeAt(index);
+      }
+    } catch (e) {
+      throw e;
     }
+
     notifyListeners();
   }
 
@@ -127,9 +169,9 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product obj) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/products.json';
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/products.json';
       var response = await http.post(url,
           body: json.encode({
             'name': obj.name,
@@ -151,9 +193,9 @@ class Products with ChangeNotifier {
   }
 
   Future<void> editProduct(Product product) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/products/${product.id}.json';
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/products/${product.id}.json';
       var response = await http.patch(url,
           body: json.encode({
             'name': product.name,

@@ -21,11 +21,12 @@ class StockData with ChangeNotifier {
       if (response.statusCode != 200) throw response.statusCode;
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       List<Stock> loadedStocks = [];
-      extractedData.forEach((stockId, stockData) {
-        Stock temp = Stock.fromJson(stockData);
-        temp.id = stockId;
-        loadedStocks.add(temp);
-      });
+      if (extractedData != null)
+        extractedData.forEach((stockId, stockData) {
+          Stock temp = Stock.fromJson(stockData);
+          temp.id = stockId;
+          loadedStocks.add(temp);
+        });
       _stocks = loadedStocks;
       notifyListeners();
       return loadedStocks;
@@ -42,9 +43,10 @@ class StockData with ChangeNotifier {
       if (response.statusCode != 200) throw response.statusCode;
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       List<String> loadedCompanies = [];
-      extractedData.forEach((id, data) {
-        loadedCompanies.add(data['companyName']);
-      });
+      if (extractedData != null)
+        extractedData.forEach((id, data) {
+          loadedCompanies.add(data['companyName']);
+        });
       _companies = loadedCompanies;
       notifyListeners();
       return loadedCompanies;

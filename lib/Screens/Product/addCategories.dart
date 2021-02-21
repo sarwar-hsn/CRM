@@ -13,6 +13,13 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
   bool isLoading = false;
   final _form = GlobalKey<FormState>();
   String category;
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<Products>(context, listen: false).fetchAndSetCategories();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

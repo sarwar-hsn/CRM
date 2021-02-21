@@ -11,7 +11,6 @@ class ProductsScreen extends StatelessWidget {
     final category = ModalRoute.of(context).settings.arguments as String;
     List<Product> products =
         Provider.of<Products>(context).getProductsbyCategory(category);
-    // Provider.of<Products>(context).getProductsbyCategory(category);
     return Scaffold(
       appBar: AppBar(
         title: Text(category),

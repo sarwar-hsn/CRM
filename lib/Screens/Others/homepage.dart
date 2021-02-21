@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 
+import '../../provider/Customers.dart';
+import '../../provider/products.dart';
+import '../../provider/stockdata.dart';
 import '../../provider/stockdata.dart';
 import 'mainDrawer.dart';
 
@@ -16,6 +19,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<Customers>(context, listen: false).fetCustomers();
+      Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+      Provider.of<Products>(context, listen: false).fetchAndSetCategories();
+      Provider.of<StockData>(context, listen: false).fetchAndSetStock();
+      Provider.of<StockData>(context, listen: false).fetchAndSetCompanies();
+    });
     super.initState();
   }
 
