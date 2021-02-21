@@ -7,14 +7,64 @@ import 'package:http/http.dart' as http;
 
 class StockData with ChangeNotifier {
   List<Stock> _stocks = [];
-  List<String> _companies = ['BDgrps'];
+  List<String> _companies = [];
 
   List<String> get companies {
     return [..._companies];
   }
 
-  void addCompany(String companyName) {
-    _companies.add(companyName);
+  Future<List<Stock>> fetchAndSetStock() async {
+    try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/stocks.json';
+      var response = await http.get(url);
+      if (response.statusCode != 200) throw response.statusCode;
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      List<Stock> loadedStocks = [];
+      extractedData.forEach((stockId, stockData) {
+        Stock temp = Stock.fromJson(stockData);
+        temp.id = stockId;
+        loadedStocks.add(temp);
+      });
+      _stocks = loadedStocks;
+      notifyListeners();
+      return loadedStocks;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> fetchAndSetCompanies() async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/companies.json';
+    try {
+      var response = await http.get(url);
+      final extractedData = json.decode(response.body);
+      List<String> loadedData = [];
+      extractedData.forEach((id, data) {
+        loadedData.add(data['companyName']);
+      });
+      _companies = loadedData;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> addCompany(String companyName) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/companies.json';
+    try {
+      var response = await http.post(url,
+          body: json.encode({
+            'companyName': companyName,
+          }));
+      if (response.statusCode == 200) {
+        _companies.add(companyName);
+      }
+    } catch (e) {
+      throw e;
+    }
+
     notifyListeners();
   }
 
@@ -23,28 +73,61 @@ class StockData with ChangeNotifier {
   }
 
   Future<void> addStock(Stock newStock) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/stocks.json';
-    var response = await http.post(url,
-        body: json.encode({
-          'companyName': newStock.companyName,
-          'productName': newStock.productName,
-          'totalUnit': newStock.totalUnit,
-          'unitPrice': newStock.unitPrice,
-          'totalCost': newStock.totalCost,
-          'paid': newStock.paid,
-          'due': newStock.due,
-          'extraFee': newStock.extraFee,
-          'date': newStock.date,
-          'paymentHistory': newStock.paymentHistory,
-          'isActive': newStock.isActive,
-        }));
-    if (response.statusCode == 200) {
-      newStock.id = json.decode(response.body)['name'];
-      print(newStock.id);
-      _stocks.add(newStock);
+    try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/stocks.json';
+      var response = await http.post(url,
+          body: json.encode({
+            'companyName': newStock.companyName,
+            'productName': newStock.productName,
+            'totalUnit': newStock.totalUnit,
+            'unitPrice': newStock.unitPrice,
+            'totalCost': newStock.totalCost,
+            'paid': newStock.paid,
+            'due': newStock.due,
+            'extraFee': newStock.extraFee,
+            'date': newStock.date,
+            'paymentHistory': newStock.paymentHistory,
+            'isActive': newStock.isActive,
+          }));
+      if (response.statusCode == 200) {
+        newStock.id = json.decode(response.body)['name'];
+        print(newStock.id);
+        _stocks.add(newStock);
+      }
+    } catch (e) {
+      throw e;
     }
 
+    notifyListeners();
+  }
+
+  Future<void> toggleActivate(Stock stock) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/stocks/${stock.id}.json';
+    try {
+      var response =
+          http.patch(url, body: json.encode({'isActive': stock.isActive}));
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> updatePayment(Stock stock) async {
+    final url =
+        'https://shohel-traders-default-rtdb.firebaseio.com/stocks/${stock.id}.json';
+    try {
+      var response = await http.patch(url,
+          body: json.encode({
+            'totalCost': stock.totalCost,
+            'paid': stock.paid,
+            'due': stock.due,
+            'paymentHistory': stock.paymentHistory,
+          }));
+      if (response.statusCode != 200) throw response.statusCode;
+    } catch (e) {
+      throw e;
+    }
     notifyListeners();
   }
 
@@ -57,37 +140,21 @@ class StockData with ChangeNotifier {
     return null;
   }
 
-  Stock deleteStock(String id) {
-    Stock temp = getStockById(id);
-    int index = getIndexbyId(id);
-    if (index != -1) {
-      _stocks.removeAt(index);
-    }
-    notifyListeners();
-    return temp;
-  }
+  // Stock deleteStock(String id) {
+  //   Stock temp = getStockById(id);
+  //   int index = getIndexbyId(id);
+  //   if (index != -1) {
+  //     _stocks.removeAt(index);
+  //   }
+  //   notifyListeners();
+  //   return temp;
+  // }
 
   int getIndexbyId(String id) {
     for (int i = 0; i < _stocks.length; i++) {
       if (_stocks[i].id == id) return i;
     }
     return -1;
-  }
-
-  Future<List<Stock>> fetchAndSetStock() async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/stocks.json';
-    var response = await http.get(url);
-    final extractedData = json.decode(response.body) as Map<String, dynamic>;
-    List<Stock> loadedStocks = [];
-    extractedData.forEach((stockId, stockData) {
-      Stock temp = Stock.fromJson(stockData);
-      temp.id = stockId;
-      loadedStocks.add(temp);
-    });
-    _stocks = loadedStocks;
-    notifyListeners();
-    return loadedStocks;
   }
 
   void callListerner() {

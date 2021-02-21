@@ -148,6 +148,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 total: customer.total));
           } catch (e) {
             showDialog(
+                barrierDismissible: false,
                 context: context,
                 builder: (context) {
                   return AlertDialog(

@@ -15,11 +15,14 @@ class AddToStockScreen extends StatefulWidget {
 }
 
 class _AddToStockScreenState extends State<AddToStockScreen> {
+  bool isLoading = false;
+
   String dropDownValue;
   DateTime date = DateTime.now();
   final _companyNameForm = GlobalKey<FormState>();
   final _form = GlobalKey<FormState>();
   Stock tempStock = new Stock();
+  String companyName;
 
   double tempTotalUnit = 0;
   double tempUnitPrice = 0;
@@ -89,11 +92,49 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
   void _saveStock(StockData stocks) {
     if (_form.currentState.validate()) {
       _form.currentState.save();
+      tempStock.totalCost =
+          tempStock.unitPrice * tempStock.totalUnit + tempStock.extraFee;
+      tempStock.due = tempStock.totalCost - tempStock.paid;
+      tempStock.companyName = dropDownValue;
+
+      tempStock.id = Uuid().v1();
+      tempStock.date = DateFormat('dd-MM-yyyy').format(date);
+      if (dropDownValue == null)
+        tempStock.companyName = 'Unknown';
+      else
+        tempStock.companyName = dropDownValue;
+      tempStock.paymentHistory = [
+        {
+          'date': DateFormat('dd-MM-yyyy').format(date),
+          'payment': tempStock.paid
+        }
+      ];
+
       showDialog(
           barrierDismissible: false,
           context: context,
           builder: (context) {
             return AlertDialog(
+              title: Text('Are you Confirmed ? '),
+              content: Container(
+                height: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Company name: ' + tempStock.companyName),
+                    Text('Prduct name: ' + tempStock.productName),
+                    Text('Total: ' + tempStock.totalCost.toString()),
+                    Text('Transportation / Extra: ' +
+                        tempStock.extraFee.toString()),
+                    Text('Paid: ' + tempStock.paid.toString()),
+                    Text(
+                      'due: ' + tempStock.due.toString(),
+                    ),
+                    Text('Date : ' + tempStock.date)
+                  ],
+                ),
+              ),
               actions: [
                 ElevatedButton(
                     onPressed: () {
@@ -107,51 +148,57 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                     child: Text('cancel'))
               ],
             );
-          }).then((value) {
+          }).then((value) async {
         if (value) {
-          tempStock.totalCost =
-              tempStock.unitPrice * tempStock.totalUnit + tempStock.extraFee;
-          tempStock.due = tempStock.totalCost - tempStock.paid;
-          tempStock.companyName = dropDownValue;
+          try {
+            setState(() {
+              isLoading = true;
+            });
+            await stocks.addStock(new Stock(
+                companyName: tempStock.companyName,
+                date: tempStock.date,
+                due: tempStock.due,
+                extraFee: tempStock.extraFee,
+                id: tempStock.id,
+                paid: tempStock.paid,
+                productName: tempStock.productName,
+                totalCost: tempStock.totalCost,
+                totalUnit: tempStock.totalUnit,
+                unitPrice: tempStock.unitPrice,
+                paymentHistory: tempStock.paymentHistory,
+                isActive: true));
+          } catch (e) {
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text('something went wrong !!!'),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('okay'))
+                    ],
+                  );
+                });
+          }
 
-          // Stock finalStock = deepCopyStock(tempStock);
-          tempStock.id = Uuid().v1();
-          tempStock.date = DateFormat('dd-MM-yyyy').format(date);
-          if (dropDownValue == null)
-            tempStock.companyName = 'Unknown';
-          else
-            tempStock.companyName = dropDownValue;
-          tempStock.paymentHistory = [
-            {
-              'date': DateFormat('dd-MM-yyyy').format(date),
-              'payment': tempStock.paid
-            }
-          ];
-
-          stocks.addStock(new Stock(
-              companyName: tempStock.companyName,
-              date: tempStock.date,
-              due: tempStock.due,
-              extraFee: tempStock.extraFee,
-              id: tempStock.id,
-              paid: tempStock.paid,
-              productName: tempStock.productName,
-              totalCost: tempStock.totalCost,
-              totalUnit: tempStock.totalUnit,
-              unitPrice: tempStock.unitPrice,
-              paymentHistory: tempStock.paymentHistory,
-              isActive: true));
+          setState(() {
+            isLoading = false;
+            dropDownValue = null;
+            date = DateTime.now();
+            tempExtraFee = 0;
+            tempUnitPrice = 0;
+            tempTotal = 0;
+            tempTotalUnit = 0;
+            dropDownValue = null;
+          });
         }
       });
 
       _form.currentState.reset();
-      setState(() {
-        tempExtraFee = 0;
-        tempUnitPrice = 0;
-        tempTotal = 0;
-        tempTotalUnit = 0;
-        dropDownValue = null;
-      });
     }
   }
 
@@ -162,207 +209,268 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
 
     return Scaffold(
         appBar: AppBar(title: Text('Add to Stock')),
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.all(10),
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Form(
-                  key: _form,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+        body: (isLoading)
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Center(
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        //container to hold drop down companies
-                        decoration: _decoration,
-                        width: 500,
-                        height: 40,
-                        padding: EdgeInsets.all(8),
-                        child: DropdownButtonHideUnderline(
-                            child: DropdownButton(
-                          value: dropDownValue,
-                          hint: Text('select Company'),
-                          onChanged: (value) {
-                            setState(() {
-                              dropDownValue = value;
-                            });
-                          },
-                          items: companies.map((value) {
-                            return DropdownMenuItem(
-                              child: Text(value.toString()),
-                              value: value,
-                            );
-                          }).toList(),
-                        )),
-                      ),
-                      Container(
-                        // product name in stock
-                        width: 500,
-                        height: 50,
-                        padding: EdgeInsets.all(8),
-                        child: TextFormField(
-                          decoration: getInputDesign('product name'),
-                          validator: (value) {
-                            if (double.tryParse(value) != null) {
-                              return 'only numbers not allowed';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            if (value.isEmpty)
-                              tempStock.productName =
-                                  '___'; //if the value is null then compamy name is ___
-                            else
-                              tempStock.productName = value;
-                          },
+                      Form(
+                        key: _form,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Container(
+                              //container to hold drop down companies
+                              decoration: _decoration,
+                              width: 500,
+                              height: 40,
+                              padding: EdgeInsets.all(8),
+                              child: DropdownButtonHideUnderline(
+                                  child: DropdownButton(
+                                value: dropDownValue,
+                                hint: Text('select Company'),
+                                onChanged: (value) {
+                                  setState(() {
+                                    dropDownValue = value;
+                                  });
+                                },
+                                items: companies.map((value) {
+                                  return DropdownMenuItem(
+                                    child: Text(value.toString()),
+                                    value: value,
+                                  );
+                                }).toList(),
+                              )),
+                            ),
+                            Container(
+                              // product name in stock
+                              width: 500,
+                              height: 50,
+                              padding: EdgeInsets.all(8),
+                              child: TextFormField(
+                                decoration: getInputDesign('product name'),
+                                validator: (value) {
+                                  if (double.tryParse(value) != null) {
+                                    return 'only numbers not allowed';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  if (value.isEmpty)
+                                    tempStock.productName =
+                                        '___'; //if the value is null then compamy name is ___
+                                  else
+                                    tempStock.productName = value;
+                                },
+                              ),
+                            ),
+                            Container(
+                              width: 500,
+                              height: 50,
+                              padding: EdgeInsets.all(8),
+                              child: TextFormField(
+                                decoration: getInputDesign('Unit Purchased'),
+                                onChanged: (value) {
+                                  if (_doubleValidator(value) == null) {
+                                    tempTotalUnit = double.parse(value);
+                                  }
+                                },
+                                validator: (value) {
+                                  return _doubleValidator(value);
+                                },
+                                onSaved: (value) {
+                                  tempStock.totalUnit = double.parse(value);
+                                },
+                              ),
+                            ),
+                            Container(
+                              width: 500,
+                              height: 50,
+                              padding: EdgeInsets.all(8),
+                              child: TextFormField(
+                                decoration: getInputDesign('Unit price'),
+                                onChanged: (value) {
+                                  if (_doubleValidator(value) == null) {
+                                    tempUnitPrice = double.parse(value);
+                                  }
+                                },
+                                validator: (value) {
+                                  return _doubleValidator(value);
+                                },
+                                onSaved: (value) {
+                                  tempStock.unitPrice = double.parse(value);
+                                },
+                              ),
+                            ),
+                            Container(
+                              width: 500,
+                              height: 50,
+                              padding: EdgeInsets.all(8),
+                              child: TextFormField(
+                                decoration: getInputDesign(
+                                    'Transportation Fee / Extras'),
+                                onChanged: (value) {
+                                  if (_doubleValidator(value) == null) {
+                                    tempExtraFee = double.parse(value);
+                                  }
+                                },
+                                validator: (value) {
+                                  return _doubleValidator(value);
+                                },
+                                onSaved: (value) {
+                                  tempStock.extraFee = double.parse(value);
+                                },
+                              ),
+                            ),
+                            Container(
+                                width: 500,
+                                height: 50,
+                                padding: EdgeInsets.all(8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            tempTotal =
+                                                tempTotalUnit * tempUnitPrice +
+                                                    tempExtraFee;
+                                          });
+                                        },
+                                        child: Text('Calculate Total : ')),
+                                    Text(tempTotalUnit.toString() +
+                                        ' * ' +
+                                        tempUnitPrice.toString() +
+                                        ' + ' +
+                                        tempExtraFee.toString() +
+                                        ' = ' +
+                                        tempTotal.toString())
+                                  ],
+                                )),
+                            Container(
+                              width: 500,
+                              height: 50,
+                              padding: EdgeInsets.all(8),
+                              child: TextFormField(
+                                decoration: getInputDesign('Paid'),
+                                validator: (value) {
+                                  return _doubleValidator(value);
+                                },
+                                onSaved: (value) {
+                                  tempStock.paid = double.parse(value);
+                                },
+                              ),
+                            ),
+                            dateContainer(context, _pickDate, 'Select Date'),
+                            ElevatedButton(
+                                onPressed: () {
+                                  _saveStock(stockData);
+                                },
+                                child: Text('ADD'))
+                          ],
                         ),
                       ),
-                      Container(
-                        width: 500,
-                        height: 50,
-                        padding: EdgeInsets.all(8),
-                        child: TextFormField(
-                          decoration: getInputDesign('Unit Purchased'),
-                          onChanged: (value) {
-                            if (_doubleValidator(value) == null) {
-                              tempTotalUnit = double.parse(value);
-                            }
-                          },
-                          validator: (value) {
-                            return _doubleValidator(value);
-                          },
-                          onSaved: (value) {
-                            tempStock.totalUnit = double.parse(value);
-                          },
-                        ),
-                      ),
-                      Container(
-                        width: 500,
-                        height: 50,
-                        padding: EdgeInsets.all(8),
-                        child: TextFormField(
-                          decoration: getInputDesign('Unit price'),
-                          onChanged: (value) {
-                            if (_doubleValidator(value) == null) {
-                              tempUnitPrice = double.parse(value);
-                            }
-                          },
-                          validator: (value) {
-                            return _doubleValidator(value);
-                          },
-                          onSaved: (value) {
-                            tempStock.unitPrice = double.parse(value);
-                          },
-                        ),
-                      ),
-                      Container(
-                        width: 500,
-                        height: 50,
-                        padding: EdgeInsets.all(8),
-                        child: TextFormField(
-                          decoration:
-                              getInputDesign('Transportation Fee / Extras'),
-                          onChanged: (value) {
-                            if (_doubleValidator(value) == null) {
-                              tempExtraFee = double.parse(value);
-                            }
-                          },
-                          validator: (value) {
-                            return _doubleValidator(value);
-                          },
-                          onSaved: (value) {
-                            tempStock.extraFee = double.parse(value);
-                          },
-                        ),
-                      ),
-                      Container(
-                          width: 500,
-                          height: 50,
-                          padding: EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      tempTotal =
-                                          tempTotalUnit * tempUnitPrice +
-                                              tempExtraFee;
+                      Form(
+                        key: _companyNameForm,
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 500,
+                              height: 50,
+                              padding: EdgeInsets.all(8),
+                              child: TextFormField(
+                                decoration: getInputDesign('Add Company'),
+                                validator: (value) {
+                                  if (double.tryParse(value) != null) {
+                                    return 'numbers not allowed';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  companyName = value;
+                                },
+                              ),
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  if (_companyNameForm.currentState
+                                      .validate()) {
+                                    _companyNameForm.currentState.save();
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Text(
+                                                'only add if you deal with frequently. Confirm ?'),
+                                            actions: [
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(
+                                                        context, true);
+                                                  },
+                                                  child: Text('Confirm')),
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(
+                                                        context, false);
+                                                  },
+                                                  child: Text('cancel'))
+                                            ],
+                                          );
+                                        }).then((value) async {
+                                      if (value) {
+                                        try {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          await stockData
+                                              .addCompany(companyName);
+                                        } catch (e) {
+                                          showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  content: Text(
+                                                      'something went wrong !!!'),
+                                                  actions: [
+                                                    ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: Text('okay'))
+                                                  ],
+                                                );
+                                              });
+                                        }
+
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      }
                                     });
-                                  },
-                                  child: Text('Calculate Total : ')),
-                              Text(tempTotalUnit.toString() +
-                                  ' * ' +
-                                  tempUnitPrice.toString() +
-                                  ' + ' +
-                                  tempExtraFee.toString() +
-                                  ' = ' +
-                                  tempTotal.toString())
-                            ],
-                          )),
-                      Container(
-                        width: 500,
-                        height: 50,
-                        padding: EdgeInsets.all(8),
-                        child: TextFormField(
-                          decoration: getInputDesign('Paid'),
-                          validator: (value) {
-                            return _doubleValidator(value);
-                          },
-                          onSaved: (value) {
-                            tempStock.paid = double.parse(value);
-                          },
+                                    _companyNameForm.currentState.reset();
+                                  }
+                                },
+                                child: Text('Add Company'))
+                          ],
                         ),
                       ),
-                      dateContainer(context, _pickDate, 'Select Date'),
-                      ElevatedButton(
-                          onPressed: () {
-                            _saveStock(stockData);
-                          },
-                          child: Text('ADD'))
                     ],
                   ),
                 ),
-                Form(
-                  key: _companyNameForm,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 500,
-                        height: 50,
-                        padding: EdgeInsets.all(8),
-                        child: TextFormField(
-                          decoration: getInputDesign('Add Company'),
-                          validator: (value) {
-                            if (double.tryParse(value) != null) {
-                              return 'numbers not allowed';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            stockData.addCompany(value);
-                          },
-                        ),
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            if (_companyNameForm.currentState.validate()) {
-                              _companyNameForm.currentState.save();
-                              _companyNameForm.currentState.reset();
-                            }
-                          },
-                          child: Text('Add Company'))
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ));
+              ));
   }
 }
 

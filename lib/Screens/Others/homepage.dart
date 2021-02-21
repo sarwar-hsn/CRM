@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
+import '../../provider/stockdata.dart';
 import 'mainDrawer.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const routeName = '/';
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    Provider.of<StockData>(context, listen: false).fetchAndSetCompanies();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

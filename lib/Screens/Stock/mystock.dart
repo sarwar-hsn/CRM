@@ -28,6 +28,10 @@ class _MyStockScreenState extends State<MyStockScreen> {
             if (snapshot.hasData) {
               return Center(child: displayStock(context, snapshot.data));
             }
+            if (snapshot.hasError)
+              return Center(
+                child: Text('Ran into an Error'),
+              );
             return Center(child: CircularProgressIndicator());
           },
         ));

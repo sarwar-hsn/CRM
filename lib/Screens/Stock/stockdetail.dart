@@ -7,6 +7,8 @@ import 'package:manage/Screens/Stock/updatestockpayment.dart';
 import 'package:manage/provider/stockdata.dart';
 import 'package:provider/provider.dart';
 
+import '../../provider/stockdata.dart';
+
 class StockDetailScreen extends StatefulWidget {
   static const routeName = '/StockDetailScreen';
 
@@ -15,9 +17,10 @@ class StockDetailScreen extends StatefulWidget {
 }
 
 class _StockDetailScreenState extends State<StockDetailScreen> {
-  void _aciveHandler(Stock stock) {
+  void _aciveHandler(StockData stockdata, Stock stock) {
     setState(() {
       stock.isActive = !stock.isActive;
+      stockdata.toggleActivate(stock);
     });
   }
 
@@ -80,31 +83,22 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
                                             width: 10,
                                           ),
                                           ElevatedButton(
-                                            child: Text('Delete Stock'),
-                                            onPressed: () {
-                                              stockData.deleteStock(stockId);
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          ElevatedButton(
                                             child: (stock.isActive)
                                                 ? Text(
-                                                    'Deactive',
-                                                    style: TextStyle(
-                                                        color:
-                                                            Colors.redAccent),
-                                                  )
-                                                : Text(
-                                                    'Active',
+                                                    'Account is Active',
                                                     style: TextStyle(
                                                         color:
                                                             Colors.greenAccent),
+                                                  )
+                                                : Text(
+                                                    'Account is Deactive',
+                                                    style: TextStyle(
+                                                        color: Colors.brown,
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                                   ),
                                             onPressed: () {
-                                              _aciveHandler(stock);
+                                              _aciveHandler(stockData, stock);
                                             },
                                           ),
                                         ]),

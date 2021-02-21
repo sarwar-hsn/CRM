@@ -21,7 +21,7 @@ class Stock {
       this.id,
       this.due: 0,
       this.paid: 0,
-      this.productName: '___',
+      this.productName: 'unknown',
       this.totalCost: 0,
       this.totalUnit: 0,
       this.extraFee: 0,
