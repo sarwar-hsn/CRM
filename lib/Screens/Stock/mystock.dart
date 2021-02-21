@@ -15,26 +15,45 @@ class MyStockScreen extends StatefulWidget {
 
 class _MyStockScreenState extends State<MyStockScreen> {
   bool isLoading = false;
+  String filterValue;
+  List<String> filterItems = ['Active Stocks', 'All stocks'];
+  List<Stock> stocks;
+
   @override
   Widget build(BuildContext context) {
     StockData stockData = Provider.of<StockData>(context);
+    if (filterValue == null || filterValue == filterItems[0]) {
+      stocks = stockData.activeStocks();
+    } else {
+      stocks = stockData.stocks;
+    }
     return Scaffold(
         appBar: AppBar(
           title: Text('My Stocks'),
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                setState(() {
+                  filterValue = value;
+                });
+              },
+              initialValue: filterItems[0],
+              itemBuilder: (context) {
+                return filterItems.map((value) {
+                  return PopupMenuItem<String>(
+                    child: Text(value),
+                    value: value,
+                  );
+                }).toList();
+              },
+            )
+          ],
         ),
-        body: FutureBuilder(
-          future: stockData.fetchAndSetStock(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Center(child: displayStock(context, snapshot.data));
-            }
-            if (snapshot.hasError)
-              return Center(
-                child: Text('Ran into an Error'),
-              );
-            return Center(child: CircularProgressIndicator());
-          },
-        ));
+        body: (stocks.isEmpty)
+            ? Center(
+                child: Text('Nothing to display'),
+              )
+            : Center(child: displayStock(context, stocks)));
   }
 }
 

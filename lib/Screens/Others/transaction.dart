@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:manage/Model/Customer.dart';
 import 'package:manage/Screens/Customer/customerDetailScreen.dart';
 import 'package:manage/Screens/Others/mainDrawer.dart';
+import 'package:manage/Screens/Stock/stockdetail.dart';
 import 'package:manage/provider/Customers.dart';
 import 'package:provider/provider.dart';
 
@@ -236,9 +237,27 @@ class SingleBoxDesign extends StatelessWidget {
                   );
 
                 return ListTile(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed(StockDetailScreen.routeName,
+                        arguments: tempStock[index - tempCustomer.length].id);
+                  },
                   leading: Icon(Icons.account_tree),
-                  title: Text(tempStock[index - tempCustomer.length].id),
+                  title: Row(
+                    children: [
+                      Text(
+                        'Date : ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(tempStock[index - tempCustomer.length].date),
+                      Text(' Company Name : ',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(tempStock[index - tempCustomer.length].companyName),
+                      Text(' Due : ',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                          tempStock[index - tempCustomer.length].due.toString())
+                    ],
+                  ),
                 );
 
                 // : Text('fuck');

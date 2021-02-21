@@ -135,7 +135,7 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetCustomers() async {
+  Future<List<Customer>> fetCustomers() async {
     try {
       final url =
           'https://shohel-traders-default-rtdb.firebaseio.com/customers.json';
@@ -150,10 +150,11 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
         });
 
       _customers = loadedCustomer;
+      notifyListeners();
+      return loadedCustomer;
     } catch (e) {
       throw e;
     }
-    notifyListeners();
   }
 
   Future<void> addCustomerProduct(Customer customer) async {

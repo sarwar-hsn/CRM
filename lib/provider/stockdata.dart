@@ -77,6 +77,16 @@ class StockData with ChangeNotifier {
     return [..._stocks];
   }
 
+  List<Stock> activeStocks() {
+    List<Stock> temp = [];
+    for (int i = 0; i < _stocks.length; i++) {
+      if (_stocks[i].isActive) {
+        temp.add(_stocks[i]);
+      }
+    }
+    return temp;
+  }
+
   Future<void> addStock(Stock newStock) async {
     try {
       final url =

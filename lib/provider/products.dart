@@ -6,57 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
-  List<Product> _products = [
-    // Product(
-    //     id: Uuid().v1(),
-    //     name: 'Fire Rod',
-    //     unitName: 'kg',
-    //     unitPrice: 200,
-    //     category: 'rod',
-    //     availableAmount: 300),
-    // Product(
-    //     id: Uuid().v4(),
-    //     name: 'Crown cement',
-    //     unitName: 'bag',
-    //     unitPrice: 50,
-    //     category: 'cement',
-    //     availableAmount: 500),
-    // Product(
-    //     id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.google.com'),
-    //     name: 'shosta balu',
-    //     unitName: 'kg',
-    //     unitPrice: 50,
-    //     category: 'balu',
-    //     availableAmount: 5000),
-    // Product(
-    //     id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.facebook.com'),
-    //     name: 'goru',
-    //     unitName: 'piece',
-    //     unitPrice: 10000,
-    //     category: 'animal',
-    //     availableAmount: 10),
-    // Product(
-    //     id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.twitter.com'),
-    //     name: 'murgi',
-    //     unitName: 'kg',
-    //     unitPrice: 350,
-    //     category: 'animal',
-    //     availableAmount: 500),
-    // Product(
-    //     id: Uuid().v5(Uuid.NAMESPACE_URL, 'www.instagram.com'),
-    //     name: 'hash',
-    //     unitName: 'kg',
-    //     unitPrice: 50,
-    //     category: 'animal',
-    //     availableAmount: 200),
-    // Product(
-    //     id: Uuid().v1(),
-    //     name: 'vhera',
-    //     unitName: 'piece',
-    //     unitPrice: 2000,
-    //     category: 'animal',
-    //     availableAmount: 30),
-  ];
+  List<Product> _products = [];
 
   List<String> _categories = [];
 
