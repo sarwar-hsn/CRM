@@ -34,26 +34,29 @@ class StockData with ChangeNotifier {
     }
   }
 
-  Future<void> fetchAndSetCompanies() async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/companies.json';
+  Future<List<String>> fetchAndSetCompanies() async {
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/companies.json';
       var response = await http.get(url);
-      final extractedData = json.decode(response.body);
-      List<String> loadedData = [];
+      if (response.statusCode != 200) throw response.statusCode;
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      List<String> loadedCompanies = [];
       extractedData.forEach((id, data) {
-        loadedData.add(data['companyName']);
+        loadedCompanies.add(data['companyName']);
       });
-      _companies = loadedData;
+      _companies = loadedCompanies;
+      notifyListeners();
+      return loadedCompanies;
     } catch (e) {
       throw e;
     }
   }
 
   Future<void> addCompany(String companyName) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/companies.json';
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/companies.json';
       var response = await http.post(url,
           body: json.encode({
             'companyName': companyName,
@@ -103,9 +106,9 @@ class StockData with ChangeNotifier {
   }
 
   Future<void> toggleActivate(Stock stock) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/stocks/${stock.id}.json';
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/stocks/${stock.id}.json';
       var response =
           http.patch(url, body: json.encode({'isActive': stock.isActive}));
     } catch (e) {
@@ -114,9 +117,9 @@ class StockData with ChangeNotifier {
   }
 
   Future<void> updatePayment(Stock stock) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/stocks/${stock.id}.json';
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/stocks/${stock.id}.json';
       var response = await http.patch(url,
           body: json.encode({
             'totalCost': stock.totalCost,

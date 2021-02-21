@@ -197,9 +197,13 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
           });
         }
       });
-
       _form.currentState.reset();
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override
@@ -227,29 +231,48 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Container(
-                              //container to hold drop down companies
-                              decoration: _decoration,
-                              width: 500,
-                              height: 40,
-                              padding: EdgeInsets.all(8),
-                              child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                value: dropDownValue,
-                                hint: Text('select Company'),
-                                onChanged: (value) {
-                                  setState(() {
-                                    dropDownValue = value;
-                                  });
-                                },
-                                items: companies.map((value) {
-                                  return DropdownMenuItem(
-                                    child: Text(value.toString()),
-                                    value: value,
+                            FutureBuilder(
+                                future: Provider.of<StockData>(context,
+                                        listen: false)
+                                    .fetchAndSetCompanies(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Container(
+                                      child: Text(
+                                          'Failed to load your company list'),
+                                    );
+                                  }
+                                  if (snapshot.hasData) {
+                                    companies = snapshot.data as List<String>;
+                                    return Container(
+                                      //container to hold drop down companies
+                                      decoration: _decoration,
+                                      width: 500,
+                                      height: 40,
+                                      padding: EdgeInsets.all(8),
+                                      child: DropdownButtonHideUnderline(
+                                          child: DropdownButton(
+                                        value: dropDownValue,
+                                        hint: Text('select Company'),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            dropDownValue = value;
+                                          });
+                                        },
+                                        items: companies.map((value) {
+                                          return DropdownMenuItem(
+                                            child: Text(value.toString()),
+                                            value: value,
+                                          );
+                                        }).toList(),
+                                      )),
+                                    );
+                                  }
+
+                                  return Container(
+                                    child: CircularProgressIndicator(),
                                   );
-                                }).toList(),
-                              )),
-                            ),
+                                }),
                             Container(
                               // product name in stock
                               width: 500,

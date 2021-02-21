@@ -70,9 +70,9 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
   }
 
   Future<void> addCustomer(Customer newCustomer) async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/customers.json';
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/customers.json';
       var response = await http.post(url,
           body: json.encode({
             'name': newCustomer.name,
@@ -97,9 +97,9 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
   }
 
   Future<void> editCustomer(Customer customer) async {
-    var url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
     try {
+      var url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
       var response = await http.patch(url,
           body: json.encode({
             'name': customer.name,
@@ -118,26 +118,27 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
   }
 
   Future<void> updateCustomerPayment(Customer customer) async {
-    var url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
     try {
+      var url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
       var response = await http.patch(url,
           body: json.encode({
             'due': customer.due,
             'paid': customer.paid,
             'paymentDate': customer.paymentDate,
           }));
-      notifyListeners();
+
       if (response.statusCode != 200) throw response.statusCode;
     } catch (e) {
       throw e;
     }
+    notifyListeners();
   }
 
   Future<void> fetCustomers() async {
-    final url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/customers.json';
     try {
+      final url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/customers.json';
       var response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       List<Customer> loadedCustomer = [];
@@ -149,16 +150,16 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
       });
 
       _customers = loadedCustomer;
-      notifyListeners();
     } catch (e) {
       print('Error' + e.toString());
     }
+    notifyListeners();
   }
 
   Future<void> addCustomerProduct(Customer customer) async {
-    var url =
-        'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
     try {
+      var url =
+          'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
       var response = await http.patch(url,
           body: json.encode({
             'paid': customer.paid,

@@ -16,7 +16,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    Provider.of<StockData>(context, listen: false).fetchAndSetCompanies();
     super.initState();
   }
 
