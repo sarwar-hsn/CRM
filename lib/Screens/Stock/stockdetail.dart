@@ -129,6 +129,14 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
+                                              Text('Total Unit : ' +
+                                                  stock.totalUnit.toString()),
+                                              Text('Unit Price : ' +
+                                                  stock.unitPrice.toString()),
+                                              Text(
+                                                  'Transportation / Extras : ' +
+                                                      stock.extraFee
+                                                          .toString()),
                                               Text('Total : ' +
                                                   stock.totalCost.toString()),
                                               Text('Paid : ' +

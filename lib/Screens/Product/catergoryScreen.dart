@@ -14,9 +14,6 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((value) {
-      Provider.of<Products>(context, listen: false).fetchAndSetProducts();
-    });
     super.initState();
   }
 

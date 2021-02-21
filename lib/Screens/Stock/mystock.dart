@@ -52,7 +52,7 @@ Container displayStock(BuildContext context, List<Stock> stocks) {
             child: Container(
               child: ListTile(
                 trailing: Icon(
-                  Icons.details,
+                  Icons.arrow_right,
                   size: 0,
                 ),
                 title: Row(
@@ -82,7 +82,7 @@ Container displayStock(BuildContext context, List<Stock> stocks) {
                     StockDetailScreen.routeName,
                     arguments: stocks[index].id);
               },
-              trailing: Icon(Icons.details),
+              trailing: Icon(Icons.arrow_right),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
