@@ -84,6 +84,7 @@ class StockData with ChangeNotifier {
         temp.add(_stocks[i]);
       }
     }
+    temp.sort((a, b) => b.date.compareTo(a.date));
     return temp;
   }
 

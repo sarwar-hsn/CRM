@@ -34,7 +34,6 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
         appBar: AppBar(
           title: Text('Stock Detail'),
         ),
-        drawer: MainDrawer(),
         body: SafeArea(
           child: (stock == null)
               ? Text('something went wrong')
@@ -137,6 +136,15 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
                                                   'Transportation / Extras : ' +
                                                       stock.extraFee
                                                           .toString()),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 300,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
                                               Text('Total : ' +
                                                   stock.totalCost.toString()),
                                               Text('Paid : ' +
@@ -151,38 +159,36 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
                                   )
                                 ],
                               ),
-                              Container(
-                                height: 200,
-                                width: 400,
-                                child: (stock.paymentHistory.length == 0)
-                                    ? Text(
-                                        'No payment yet',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                    : ListView.builder(
-                                        itemCount:
-                                            stock.paymentHistory.length + 1,
-                                        itemBuilder: (context, index) {
-                                          if (index == 0) {
-                                            return Text('Payment History');
-                                          }
-                                          index -= 1;
-                                          return Text('Date : ' +
-                                              stock.paymentHistory[index]
-                                                  ['date'] +
-                                              '     Amount paid : ' +
-                                              stock.paymentHistory[index]
-                                                      ['payment']
-                                                  .toString());
-                                        },
-                                      ),
-                              )
                             ],
                           ),
                         ),
                       ),
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        height: 200,
+                        width: 400,
+                        child: (stock.paymentHistory.length == 0)
+                            ? Text(
+                                'No payment yet',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: stock.paymentHistory.length + 1,
+                                itemBuilder: (context, index) {
+                                  if (index == 0) {
+                                    return Text('Payment History');
+                                  }
+                                  index -= 1;
+                                  return Text('Date : ' +
+                                      stock.paymentHistory[index]['date'] +
+                                      '     Amount paid : ' +
+                                      stock.paymentHistory[index]['payment']
+                                          .toString());
+                                },
+                              ),
+                      )
                     ],
                   ),
                 ),

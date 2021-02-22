@@ -217,7 +217,6 @@ class SingleBoxDesign extends StatelessWidget {
                             color: Colors.red, fontWeight: FontWeight.bold),
                       ),
                       Text('Total Sell : ' + data['total'].toString() + '   '),
-                      Text('Due : ' + data['due'].toString()),
                     ],
                   );
                 }
@@ -232,22 +231,24 @@ class SingleBoxDesign extends StatelessWidget {
                           arguments: id[index]);
                     },
                     leading: Icon(Icons.person),
-                    title: Text(tempCustomer[index].name +
-                        '->  total : ' +
-                        customers
-                            .getCustomerPaymentInfoByDate(
-                                tempCustomer[index].id, date)['total']
-                            .toString() +
-                        '  paid : ' +
-                        customers
-                            .getCustomerPaymentInfoByDate(
-                                tempCustomer[index].id, date)['paid']
-                            .toString() +
-                        '  due : ' +
-                        customers
-                            .getCustomerPaymentInfoByDate(
-                                tempCustomer[index].id, date)['due']
-                            .toString()),
+                    title: Row(
+                      children: [
+                        Text(
+                          tempCustomer[index].name + ' : ',
+                          style: _style,
+                        ),
+                        Text(' total : ' +
+                            customers
+                                .getCustomerPaymentInfoByDate(
+                                    tempCustomer[index].id, date)['total']
+                                .toString() +
+                            '  paid : ' +
+                            customers
+                                .getCustomerPaymentInfoByDate(
+                                    tempCustomer[index].id, date)['paid']
+                                .toString()),
+                      ],
+                    ),
                   );
 
                 return ListTile(
@@ -269,10 +270,11 @@ class SingleBoxDesign extends StatelessWidget {
                       Text(' Item Name : ',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       Text(tempStock[index - tempCustomer.length].productName),
-                      Text(' Due : ',
+                      Text(' Paid : ',
                           style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(
-                          tempStock[index - tempCustomer.length].due.toString())
+                      Text(tempStock[index - tempCustomer.length]
+                          .paid
+                          .toString())
                     ],
                   ),
                 );
@@ -339,10 +341,7 @@ class InsideContainer extends StatelessWidget {
                             style: TextStyle(
                                 color: Colors.red, fontWeight: FontWeight.bold),
                           ),
-                          Text('Total Sell : ' +
-                              data['total'].toString() +
-                              '   '),
-                          Text('Due : ' + data['due'].toString()),
+                          Text('Total Sell : ' + data['total'].toString()),
                         ],
                       );
                     }
@@ -371,11 +370,6 @@ class InsideContainer extends StatelessWidget {
                                 customers
                                     .getCustomerPaymentInfoByDate(
                                         tempCustomer[index].id, date)['paid']
-                                    .toString() +
-                                '  due : ' +
-                                customers
-                                    .getCustomerPaymentInfoByDate(
-                                        tempCustomer[index].id, date)['due']
                                     .toString()),
                           ],
                         ),
@@ -400,10 +394,10 @@ class InsideContainer extends StatelessWidget {
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           Text(tempStock[index - tempCustomer.length]
                               .companyName),
-                          Text(' Due : ',
+                          Text(' Paid : ',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           Text(tempStock[index - tempCustomer.length]
-                              .due
+                              .paid
                               .toString())
                         ],
                       ),
