@@ -21,6 +21,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DateTime date = DateTime.now();
+
+  Future<void> _pickDateforCustomerProduct() async {
+    DateTime date = await showDatePicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 30),
+      lastDate: DateTime(DateTime.now().year + 5),
+      initialDate: DateTime.now(),
+      currentDate: DateTime.now(),
+    );
+    if (date != null)
+      setState(() {
+        this.date = date;
+      });
+  }
+
   @override
   void initState() {
     Future.delayed(Duration.zero).then((value) {
@@ -40,6 +55,15 @@ class _HomePageState extends State<HomePage> {
         sellPerDay(customer, DateFormat('dd-MM-yyyy').format(date));
     return Scaffold(
         drawer: MainDrawer(),
+        floatingActionButton: FloatingActionButton(
+          elevation: 10,
+          onPressed: () {
+            _pickDateforCustomerProduct();
+          },
+          child: Icon(
+            Icons.date_range,
+          ),
+        ),
         appBar: AppBar(
           title: Text('M/S. Shohel Traders (Beta Version)'),
           centerTitle: true,

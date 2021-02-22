@@ -172,7 +172,10 @@ class Products with ChangeNotifier {
   }
 
   List<Product> getProductsbyCategory(String category) {
-    return _products.where((element) => element.category == category).toList();
+    return _products
+        .where((element) =>
+            (element.category == category && element.availableAmount != 0))
+        .toList();
   }
 
   List<String> getProductsList() {
