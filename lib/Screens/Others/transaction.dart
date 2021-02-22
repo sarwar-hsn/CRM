@@ -94,6 +94,14 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   }
 }
 
+bool checkDuplicateCustomerById(String id, List<Customer> list) {
+  if (list.isEmpty) return false;
+  for (int i = 0; i < list.length; i++) {
+    if (list[i].id == id) return true;
+  }
+  return false;
+}
+
 Map<String, Object> listofCustomerandTotalByDate(
     DateTime date, List<Customer> customer) {
   List<Customer> temp = [];
@@ -112,7 +120,17 @@ Map<String, Object> listofCustomerandTotalByDate(
         temp.add(customer[i]);
       }
     }
+    for (int j = 0; j < customer[i].paymentDate.length; j++) {
+      if (DateFormat('dd-MM-yyyy').format(date).toString() ==
+          customer[i].paymentDate[j]['date']) {
+        if (checkDuplicateCustomerById(customer[i].id, temp) == false) {
+          temp.add(customer[i]);
+          id.add(customer[i].id);
+        }
+      }
+    }
   }
+
   for (int i = 0; i < temp.length; i++) {
     for (int j = 0; j < temp[i].paymentDate.length; j++) {
       if (temp[i].paymentDate[j]['date'] ==
@@ -124,9 +142,9 @@ Map<String, Object> listofCustomerandTotalByDate(
   due = total - deposite;
   return {
     'customers': temp,
-    'total': total,
-    'deposite': deposite,
-    'due': due,
+    'total': total.toStringAsFixed(2),
+    'deposite': deposite.toStringAsFixed(2),
+    'due': due.toStringAsFixed(2),
     'id': id
   };
 }
@@ -149,6 +167,7 @@ Map<String, Object> getStockByDate(String date, List<Stock> stocks) {
 
 class SingleBoxDesign extends StatelessWidget {
   final DateTime date;
+  final _style = TextStyle(fontWeight: FontWeight.bold);
   SingleBoxDesign({this.date});
   @override
   Widget build(BuildContext context) {
@@ -174,7 +193,7 @@ class SingleBoxDesign extends StatelessWidget {
       child: (tempCustomer.length == 0 && tempStock.length == 0)
           ? Text('No transaction on this day')
           : ListView.builder(
-              itemCount: tempCustomer.length + 2 + tempStock.length,
+              itemCount: tempCustomer.length + 1 + tempStock.length,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Row(
@@ -183,7 +202,7 @@ class SingleBoxDesign extends StatelessWidget {
                         'Date : ' +
                             DateFormat('dd-MM-yyyy').format(date).toString() +
                             '   ',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: _style,
                       ),
                       Text(
                         ' Cash In : ' + data['deposite'].toString() + '   ',
@@ -197,22 +216,17 @@ class SingleBoxDesign extends StatelessWidget {
                         style: TextStyle(
                             color: Colors.red, fontWeight: FontWeight.bold),
                       ),
-                    ],
-                  );
-                }
-                if (index == 1) {
-                  return Row(
-                    children: [
                       Text('Total Sell : ' + data['total'].toString() + '   '),
                       Text('Due : ' + data['due'].toString()),
                     ],
                   );
                 }
-                index -= 2;
-                print(tempStock.length);
+
+                index -= 1;
                 if (index < tempCustomer.length)
                   return ListTile(
                     onTap: () {
+                      // print('index value = ' + index.toString() + ' id = ' + id[i]);
                       Navigator.of(context).pushNamed(
                           CustomerDetailScreen.routeName,
                           arguments: id[index]);
@@ -241,7 +255,7 @@ class SingleBoxDesign extends StatelessWidget {
                     Navigator.of(context).pushNamed(StockDetailScreen.routeName,
                         arguments: tempStock[index - tempCustomer.length].id);
                   },
-                  leading: Icon(Icons.account_tree),
+                  leading: Icon(Icons.account_box),
                   title: Row(
                     children: [
                       Text(
@@ -252,6 +266,9 @@ class SingleBoxDesign extends StatelessWidget {
                       Text(' Company Name : ',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       Text(tempStock[index - tempCustomer.length].companyName),
+                      Text(' Item Name : ',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(tempStock[index - tempCustomer.length].productName),
                       Text(' Due : ',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       Text(
@@ -269,69 +286,130 @@ class SingleBoxDesign extends StatelessWidget {
 
 class InsideContainer extends StatelessWidget {
   final DateTime date;
+  final _style = TextStyle(fontWeight: FontWeight.bold);
   InsideContainer({this.date});
   @override
   Widget build(BuildContext context) {
     Customers customers = Provider.of<Customers>(context);
+    StockData stockData = Provider.of<StockData>(context);
     List<Customer> customer = customers.customers;
+    List<Stock> stocks = stockData.stocks;
     Map<String, Object> data = listofCustomerandTotalByDate(date, customer);
+    Map<String, Object> stockInfo =
+        getStockByDate(DateFormat('dd-MM-yyyy').format(date), stocks);
     List<Customer> tempCustomer = data['customers'] as List<Customer>;
+    List<Stock> tempStock = stockInfo['stocks'];
     List<String> id = data['id'] as List<String>;
-    return (tempCustomer.length == 0)
+    return (tempCustomer.length == 0 && tempStock.length == 0)
         ? Text('No Customer on this day')
         : Center(
             child: Container(
               height: 500,
-              width: 500,
+              width: 800,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(width: 1, color: Colors.black12)),
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: ListView.builder(
-                  itemCount: tempCustomer.length + 1,
+                  itemCount: tempCustomer.length + 1 + tempStock.length,
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Text('Date : ' +
-                              DateFormat('dd-MM-yyyy').format(date).toString() +
-                              '   '),
+                          Text(
+                            'Date : ' +
+                                DateFormat('dd-MM-yyyy')
+                                    .format(date)
+                                    .toString() +
+                                '   ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            ' Cash In : ' + data['deposite'].toString() + '   ',
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            ' Cash Out : ' +
+                                stockInfo['totalExpense'].toString() +
+                                '   ',
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
                           Text('Total Sell : ' +
                               data['total'].toString() +
-                              '   '),
-                          Text('Deposite : ' +
-                              data['deposite'].toString() +
                               '   '),
                           Text('Due : ' + data['due'].toString()),
                         ],
                       );
                     }
+
                     index -= 1;
+                    if (index < tempCustomer.length)
+                      return ListTile(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                              CustomerDetailScreen.routeName,
+                              arguments: id[index]);
+                        },
+                        leading: Icon(Icons.person),
+                        title: Row(
+                          children: [
+                            Text(
+                              tempCustomer[index].name + ' : ',
+                              style: _style,
+                            ),
+                            Text(' total : ' +
+                                customers
+                                    .getCustomerPaymentInfoByDate(
+                                        tempCustomer[index].id, date)['total']
+                                    .toString()),
+                            Text('  paid : ' +
+                                customers
+                                    .getCustomerPaymentInfoByDate(
+                                        tempCustomer[index].id, date)['paid']
+                                    .toString() +
+                                '  due : ' +
+                                customers
+                                    .getCustomerPaymentInfoByDate(
+                                        tempCustomer[index].id, date)['due']
+                                    .toString()),
+                          ],
+                        ),
+                      );
+
                     return ListTile(
                       onTap: () {
                         Navigator.of(context).pushNamed(
-                            CustomerDetailScreen.routeName,
-                            arguments: id[index]);
+                            StockDetailScreen.routeName,
+                            arguments:
+                                tempStock[index - tempCustomer.length].id);
                       },
-                      leading: Icon(Icons.person),
-                      title: Text(tempCustomer[index].name +
-                          '->  total : ' +
-                          customers
-                              .getCustomerPaymentInfoByDate(
-                                  tempCustomer[index].id, date)['total']
-                              .toString() +
-                          '  paid : ' +
-                          customers
-                              .getCustomerPaymentInfoByDate(
-                                  tempCustomer[index].id, date)['paid']
-                              .toString() +
-                          '  due : ' +
-                          customers
-                              .getCustomerPaymentInfoByDate(
-                                  tempCustomer[index].id, date)['due']
-                              .toString()),
+                      leading: Icon(Icons.account_box),
+                      title: Row(
+                        children: [
+                          Text(
+                            'Date : ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(tempStock[index - tempCustomer.length].date),
+                          Text(' Company Name : ',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(tempStock[index - tempCustomer.length]
+                              .companyName),
+                          Text(' Due : ',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(tempStock[index - tempCustomer.length]
+                              .due
+                              .toString())
+                        ],
+                      ),
                     );
+
+                    // : Text('fuck');
                   },
                 ),
               ),

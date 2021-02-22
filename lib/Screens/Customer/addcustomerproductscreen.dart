@@ -53,8 +53,13 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
           }).then((value) async {
         if (value) {
           customer.paid += amountPaid;
-          customer.total += customerProduct.total;
+          double total = 0;
+          for (int j = 0; j < pickedItems.length; j++) {
+            total += pickedItems[j].total;
+          }
+          customer.total += total;
           customer.due = customer.total - customer.paid;
+
           for (int i = 0; i < customer.products.length; i++) {
             if (customer.products[i].date ==
                 DateFormat('dd-MM-yyyy').format(customerProductDate)) {
@@ -95,7 +100,6 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                 isLoading = false;
                 pickedItems.clear();
               });
-              // Navigator.of(context).pop();
               return;
             }
           }
@@ -160,11 +164,11 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
         unitPurchased: customerProduct.unitPurchased,
         unitPrice: customerProduct.unitPrice,
       ));
+      _customerProductForm.currentState.reset();
       setState(() {
         dropDownValueCategory = null;
         dropDownValueProducts = null;
       });
-      _customerProductForm.currentState.reset();
     }
   }
 
@@ -369,12 +373,12 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                                   TextFormField(
                                     decoration: getInputDesign('paid amount'),
                                     validator: (value) {
-                                      if (value.isEmpty == false &&
-                                          double.parse(value) >
-                                              customer.due +
-                                                  customerProduct.total) {
-                                        return 'payment is more than due';
-                                      }
+                                      // if (value.isEmpty == false &&
+                                      //     double.parse(value) >
+                                      //         customer.due +
+                                      //             customerProduct.total) {
+                                      //   return 'payment is more than due';
+                                      // }
                                       return _doubleValidator(value);
                                     },
                                     onSaved: (value) {
