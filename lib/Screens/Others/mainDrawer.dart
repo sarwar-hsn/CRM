@@ -17,10 +17,14 @@ class MainDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Colors.blueGrey,
+        padding: EdgeInsets.all(10),
+        color: Colors.blueGrey.withOpacity(.9),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(
+              height: 10,
+            ),
             BuildListTile(
               icon: Icons.home,
               text: 'HomePage',
@@ -112,13 +116,28 @@ class BuildListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ListTile(
-          contentPadding: EdgeInsets.only(left: 20, right: 50),
-          leading: Icon(icon),
-          trailing: Text(text),
-          onTap: tapHandler,
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white60,
+              border: Border.all(width: 1, color: Colors.white12)),
+          child: ListTile(
+            contentPadding: EdgeInsets.only(left: 20, right: 50),
+            leading: Icon(
+              icon,
+              color: Colors.black54,
+            ),
+            trailing: Text(
+              text,
+              style:
+                  TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
+            ),
+            onTap: tapHandler,
+          ),
         ),
-        Divider(),
+        SizedBox(
+          height: 10,
+        )
       ],
     );
   }
