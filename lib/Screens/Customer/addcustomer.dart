@@ -398,7 +398,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                                           ? _pickDateforCustomerProduct
                                           : null,
                                       child: Text(
-                                          'Selecet a date for prducts ( default is today ) :')),
+                                          'Select a date ( Default is today ):')),
                                   SizedBox(
                                     width: 10,
                                   ),

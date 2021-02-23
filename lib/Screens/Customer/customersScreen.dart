@@ -13,6 +13,11 @@ class CustomersScreen extends StatefulWidget {
 }
 
 class _CustomersScreenState extends State<CustomersScreen> {
+  List<String> filterItems = [
+    'Sort By Name',
+    'Due (Decreasing Order)',
+  ];
+  String filterValue;
   @override
   void initState() {
     Future.delayed(Duration.zero).then((value) {
@@ -36,7 +41,23 @@ class _CustomersScreenState extends State<CustomersScreen> {
                         customers:
                             Provider.of<Customers>(context, listen: false)
                                 .customers));
-              })
+              }),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              setState(() {
+                filterValue = value;
+              });
+            },
+            initialValue: filterItems[0],
+            itemBuilder: (context) {
+              return filterItems.map((value) {
+                return PopupMenuItem<String>(
+                  child: Text(value),
+                  value: value,
+                );
+              }).toList();
+            },
+          )
         ],
       ),
       drawer: MainDrawer(),
@@ -46,7 +67,9 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [Colors.blueGrey, Colors.white70])),
-          child: CustomerListView()),
+          child: CustomerListView(
+            sortingOrder: filterValue,
+          )),
       backgroundColor: Colors.white70,
     );
   }

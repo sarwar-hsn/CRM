@@ -75,14 +75,6 @@ class MainDrawer extends StatelessWidget {
               },
             ),
             BuildListTile(
-              icon: Icons.notifications,
-              text: 'Daily Check',
-              tapHandler: () {
-                Navigator.of(context)
-                    .pushReplacementNamed(DailyCheck.routeName);
-              },
-            ),
-            BuildListTile(
               icon: Icons.add_shopping_cart,
               text: 'Add to Stock',
               tapHandler: () {
@@ -94,6 +86,14 @@ class MainDrawer extends StatelessWidget {
               text: 'My  Stock',
               tapHandler: () {
                 Navigator.of(context).pushNamed(MyStockScreen.routeName);
+              },
+            ),
+            BuildListTile(
+              icon: Icons.notifications,
+              text: 'Daily Check',
+              tapHandler: () {
+                Navigator.of(context)
+                    .pushReplacementNamed(DailyCheck.routeName);
               },
             ),
           ],

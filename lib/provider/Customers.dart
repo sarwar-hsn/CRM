@@ -18,6 +18,10 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
     _customers.sort((a, b) => (a.name.compareTo(b.name)));
   }
 
+  void sortByDue() {
+    _customers.sort((a, b) => (b.due.compareTo(a.due)));
+  }
+
   List<Customer> scheduledCustomer(DateTime date) {
     List<Customer> temp = [];
     for (int i = 0; i < _customers.length; i++) {

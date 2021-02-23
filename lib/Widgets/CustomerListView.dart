@@ -6,6 +6,9 @@ import 'package:manage/provider/Customers.dart';
 import 'package:provider/provider.dart';
 
 class CustomerListView extends StatefulWidget {
+  final String sortingOrder;
+
+  CustomerListView({this.sortingOrder});
   @override
   _CustomerListViewState createState() => _CustomerListViewState();
 }
@@ -14,8 +17,21 @@ class _CustomerListViewState extends State<CustomerListView> {
   final _style = TextStyle(fontWeight: FontWeight.bold);
   @override
   Widget build(BuildContext context) {
-    Provider.of<Customers>(context).customerByName();
-    final List<Customer> customers = Provider.of<Customers>(context).customers;
+    print(widget.sortingOrder);
+    Customers customersObj = Provider.of<Customers>(context);
+    switch (widget.sortingOrder) {
+      case 'Sort By Name':
+        customersObj.customerByName();
+
+        break;
+      case 'Due (Decreasing Order)':
+        customersObj.sortByDue();
+
+        break;
+      default:
+    }
+    final List<Customer> customers = customersObj.customers;
+
     return Column(
       children: [
         Container(

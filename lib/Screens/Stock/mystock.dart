@@ -18,7 +18,12 @@ class MyStockScreen extends StatefulWidget {
 class _MyStockScreenState extends State<MyStockScreen> {
   bool isLoading = false;
   String filterValue;
-  List<String> filterItems = ['Active Stocks', 'All stocks'];
+  List<String> filterItems = [
+    'Active Stocks',
+    'All stocks',
+    'Sort By Date (Oldest)',
+    'Sort By Date (Newest)'
+  ];
   List<Stock> stocks;
 
   @override
@@ -26,8 +31,13 @@ class _MyStockScreenState extends State<MyStockScreen> {
     StockData stockData = Provider.of<StockData>(context);
     if (filterValue == null || filterValue == filterItems[0]) {
       stocks = stockData.activeStocks();
-    } else {
+    } else if (filterValue == filterItems[1]) {
       stocks = stockData.stocks;
+    } else if (filterValue == filterItems[2]) {
+      stocks.sort((a, b) => a.date.compareTo(b.date));
+    } else {
+      //sort by date descending
+      stocks.sort((a, b) => b.date.compareTo(a.date));
     }
     return Scaffold(
         appBar: AppBar(
