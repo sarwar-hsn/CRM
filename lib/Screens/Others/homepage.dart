@@ -1,6 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:manage/Model/Customer.dart';
 
@@ -42,12 +43,16 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     isLoading = true;
     Future.delayed(Duration.zero).then((value) {
-      Provider.of<Customers>(context, listen: false).fetCustomers();
-      Provider.of<Products>(context, listen: false).fetchAndSetProducts();
-      Provider.of<Products>(context, listen: false).fetchAndSetCategories();
-      Provider.of<StockData>(context, listen: false).fetchAndSetStock();
-      Provider.of<StockData>(context, listen: false).fetchAndSetCompanies();
-      isLoading = false;
+      try {
+        Provider.of<Customers>(context, listen: false).fetCustomers();
+        Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+        Provider.of<Products>(context, listen: false).fetchAndSetCategories();
+        Provider.of<StockData>(context, listen: false).fetchAndSetStock();
+        Provider.of<StockData>(context, listen: false).fetchAndSetCompanies();
+        isLoading = false;
+      } on SocketException catch (_) {
+        isLoading = false;
+      }
     });
     super.initState();
   }
@@ -98,14 +103,15 @@ class _HomePageState extends State<HomePage> {
                         gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Colors.blueGrey, Colors.white70])),
+                            colors: [Colors.blueGrey[300], Colors.white70])),
                     child: Center(
                       child: Container(
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
                             color: Colors.white70,
                             border:
-                                Border.all(color: Colors.black12, width: 1)),
+                                Border.all(color: Colors.black26, width: 2)),
                         height: MediaQuery.of(context).size.height * .8,
                         width: 600,
                         child: ListView.builder(
@@ -119,15 +125,17 @@ class _HomePageState extends State<HomePage> {
                                     Text(
                                       'Sell Board',
                                       style: TextStyle(
+                                          fontSize: 15,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.blueAccent),
+                                          color: Colors.black87),
                                     ),
                                     Text(
                                       'Date : ' +
                                           DateFormat('dd-MM-yyyy').format(date),
                                       style: TextStyle(
+                                          fontSize: 15,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.blueAccent),
+                                          color: Colors.black87),
                                     )
                                   ],
                                 );

@@ -153,7 +153,7 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
                   gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Colors.blueGrey, Colors.white70])),
+                      colors: [Colors.blueGrey[200], Colors.white70])),
               child: Center(
                 child: Material(
                   elevation: 10,

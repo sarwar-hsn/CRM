@@ -62,15 +62,14 @@ class _CustomersScreenState extends State<CustomersScreen> {
       ),
       drawer: MainDrawer(),
       body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.blueGrey, Colors.white70])),
+          // decoration: BoxDecoration(
+          //     gradient: LinearGradient(
+          //         begin: Alignment.topLeft,
+          //         end: Alignment.bottomRight,
+          //         colors: [Colors.blueGrey, Colors.white70])),
           child: CustomerListView(
-            sortingOrder: filterValue,
-          )),
-      backgroundColor: Colors.white70,
+        sortingOrder: filterValue,
+      )),
     );
   }
 }

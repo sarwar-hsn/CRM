@@ -30,7 +30,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.blueGrey, Colors.white70])),
+                  colors: [Colors.blueGrey[200], Colors.white70])),
           child: FutureBuilder(
             future: Provider.of<Products>(context).fetchAndSetCategories(),
             builder: (context, snapshot) {

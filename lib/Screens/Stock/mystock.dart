@@ -70,7 +70,7 @@ class _MyStockScreenState extends State<MyStockScreen> {
                     gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Colors.blueGrey, Colors.white70])),
+                        colors: [Colors.blueGrey[200], Colors.white70])),
                 child: Center(child: displayStock(context, stocks))));
   }
 }

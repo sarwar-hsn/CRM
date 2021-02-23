@@ -222,7 +222,7 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                     gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Colors.blueGrey, Colors.white70])),
+                        colors: [Colors.blueGrey[200], Colors.white70])),
                 child: Center(
                   child: Container(
                     padding: EdgeInsets.all(10),
