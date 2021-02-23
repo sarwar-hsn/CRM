@@ -71,18 +71,6 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  // void updateProduct(Product temp, int index) {
-  //   _products.removeAt(index);
-  //   _products.add(new Product(
-  //       availableAmount: temp.availableAmount,
-  //       category: temp.category,
-  //       id: temp.id,
-  //       name: temp.name,
-  //       unitName: temp.unitName,
-  //       unitPrice: temp.unitPrice));
-  //   notifyListeners();
-  // }
-
   Future<void> deleteProduct({String id}) async {
     try {
       final url =
@@ -98,24 +86,6 @@ class Products with ChangeNotifier {
     }
 
     notifyListeners();
-  }
-
-  Product getProductById(String id) {
-    for (int i = 0; i < _products.length; i++) {
-      if (_products[i].id == id) return _products[i];
-    }
-    return null;
-  }
-
-  List<String> get categories {
-    return [..._categories];
-  }
-
-  bool checkDuplicate(String value) {
-    for (int i = 0; i < _categories.length; i++) {
-      if (_categories[i] == value) return true;
-    }
-    return false;
   }
 
   Future<void> addProduct(Product obj) async {
@@ -160,15 +130,33 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  bool checkDuplicate(String value) {
+    for (int i = 0; i < _categories.length; i++) {
+      if (_categories[i] == value) return true;
+    }
+    return false;
+  }
+
+  void callListener() {
+    notifyListeners();
+  }
+
+  List<String> get categories {
+    return [..._categories];
+  }
+
+  Product getProductById(String id) {
+    for (int i = 0; i < _products.length; i++) {
+      if (_products[i].id == id) return _products[i];
+    }
+    return null;
+  }
+
   int getIndexById(String id) {
     for (int i = 0; i < _products.length; i++) {
       if (_products[i].id == id) return i;
     }
     return -1;
-  }
-
-  void callListener() {
-    notifyListeners();
   }
 
   List<Product> getProductsbyCategory(String category) {

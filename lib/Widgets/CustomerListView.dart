@@ -11,6 +11,7 @@ class CustomerListView extends StatefulWidget {
 }
 
 class _CustomerListViewState extends State<CustomerListView> {
+  final _style = TextStyle(fontWeight: FontWeight.bold);
   @override
   Widget build(BuildContext context) {
     Provider.of<Customers>(context).customerByName();
@@ -32,12 +33,36 @@ class _CustomerListViewState extends State<CustomerListView> {
               SizedBox(
                 width: 50,
               ),
-              Expanded(child: Text('name')),
-              Expanded(child: Text('mobile')),
-              Expanded(child: Text('total')),
-              Expanded(child: Text('paid')),
-              Expanded(child: Text('due')),
-              Expanded(child: Text('Go to Detail')),
+              Expanded(
+                  child: Text(
+                'name',
+                style: _style,
+              )),
+              Expanded(
+                  child: Text(
+                'mobile',
+                style: _style,
+              )),
+              Expanded(
+                  child: Text(
+                'total',
+                style: _style,
+              )),
+              Expanded(
+                  child: Text(
+                'paid',
+                style: _style,
+              )),
+              Expanded(
+                  child: Text(
+                'due',
+                style: _style,
+              )),
+              Expanded(
+                  child: Text(
+                'Go to Detail',
+                style: _style,
+              )),
             ],
           ),
         ),

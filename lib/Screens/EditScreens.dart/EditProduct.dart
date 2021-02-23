@@ -116,7 +116,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             Container(width: 150, child: Text('Unit Price : ')),
                             Expanded(
                               child: TextFormField(
-                                initialValue: product.unitPrice.toString(),
+                                initialValue:
+                                    product.unitPrice.toStringAsFixed(2),
                                 decoration: getInputDesign('unit price'),
                                 validator: (value) {
                                   if (double.tryParse(value) == null)
@@ -158,7 +159,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             Expanded(
                               child: TextFormField(
                                 initialValue:
-                                    product.availableAmount.toString(),
+                                    product.availableAmount.toStringAsFixed(2),
                                 decoration: getInputDesign('available amount'),
                                 validator: (value) {
                                   if (double.tryParse(value) == null)

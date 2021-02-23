@@ -129,13 +129,15 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text('Total Unit : ' +
-                                                  stock.totalUnit.toString()),
+                                                  stock.totalUnit
+                                                      .toStringAsFixed(2)),
                                               Text('Unit Price : ' +
-                                                  stock.unitPrice.toString()),
+                                                  stock.unitPrice
+                                                      .toStringAsFixed(2)),
                                               Text(
                                                   'Transportation / Extras : ' +
                                                       stock.extraFee
-                                                          .toString()),
+                                                          .toStringAsFixed(2)),
                                             ],
                                           ),
                                         ),
@@ -146,11 +148,13 @@ class _StockDetailScreenState extends State<StockDetailScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text('Total : ' +
-                                                  stock.totalCost.toString()),
+                                                  stock.totalCost
+                                                      .toStringAsFixed(2)),
                                               Text('Paid : ' +
-                                                  stock.paid.toString()),
+                                                  stock.paid
+                                                      .toStringAsFixed(2)),
                                               Text('Due : ' +
-                                                  stock.due.toString()),
+                                                  stock.due.toStringAsFixed(2)),
                                             ],
                                           ),
                                         ),

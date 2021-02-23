@@ -74,7 +74,7 @@ class SchedulePaymentDay extends StatelessWidget {
           title: Text('Name : ' +
               scheduledCustomers[index].name +
               '    Due : ' +
-              scheduledCustomers[index].due.toString() +
+              scheduledCustomers[index].due.toStringAsFixed(2) +
               '   Mobile : ' +
               scheduledCustomers[index].mobile),
         );

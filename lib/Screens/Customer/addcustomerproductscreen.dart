@@ -29,7 +29,7 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
   String dropDownValueCategory;
   int flag = 0;
 
-  void _updateCustomer(Customer customer, Customers obj) {
+  void _updateCustomer(Customer customer, Customers obj, Products prodObj) {
     if (_updateForm.currentState.validate()) {
       _updateForm.currentState.save();
 
@@ -57,8 +57,9 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
           for (int j = 0; j < pickedItems.length; j++) {
             total += pickedItems[j].total;
           }
-          customer.total += total;
-          customer.due = customer.total - customer.paid;
+          customer.total += double.parse(total.toStringAsFixed(2));
+          customer.due =
+              double.parse((customer.total - customer.paid).toStringAsFixed(2));
 
           for (int i = 0; i < customer.products.length; i++) {
             if (customer.products[i].date ==
@@ -79,6 +80,11 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
 
               try {
                 await obj.addCustomerProduct(customer); //products for same date
+                for (int i = 0; i < pickedItems.length; i++) {
+                  Product temp =
+                      prodObj.getProductByName(pickedItems[i].productName);
+                  await prodObj.editProduct(temp);
+                }
               } catch (e) {
                 print(e.toString());
                 showDialog(
@@ -118,6 +124,11 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
           });
           try {
             await obj.addCustomerProduct(customer);
+            for (int i = 0; i < pickedItems.length; i++) {
+              Product temp =
+                  prodObj.getProductByName(pickedItems[i].productName);
+              await prodObj.editProduct(temp);
+            }
           } catch (e) {
             print(e.toString());
             showDialog(
@@ -147,7 +158,7 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
     }
   }
 
-  void _saveCustomerProduct() {
+  void _saveCustomerProduct(Products obj) {
     bool isValid = _customerProductForm.currentState.validate();
     if (isValid && dropDownValueProducts != null) {
       _customerProductForm.currentState.save();
@@ -160,12 +171,15 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
         id: Uuid().v1(),
         productName: customerProduct.productName,
         unitName: customerProduct.unitName,
-        total: customerProduct.total,
-        unitPurchased: customerProduct.unitPurchased,
-        unitPrice: customerProduct.unitPrice,
+        total: double.parse(customerProduct.total.toStringAsFixed(2)),
+        unitPurchased:
+            double.parse(customerProduct.unitPurchased.toStringAsFixed(2)),
+        unitPrice: double.parse(customerProduct.unitPrice.toStringAsFixed(2)),
       ));
       _customerProductForm.currentState.reset();
       setState(() {
+        obj.getProductByName(customerProduct.productName).availableAmount -=
+            customerProduct.unitPurchased;
         dropDownValueCategory = null;
         dropDownValueProducts = null;
       });
@@ -311,9 +325,30 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                                 ),
                                 Expanded(
                                   child: TextFormField(
-                                    decoration: getInputDesign('amount...'),
+                                    decoration: (dropDownValueProducts == null)
+                                        ? getInputDesign('amount')
+                                        : getInputDesign('available ' +
+                                            obj
+                                                .getProductById(
+                                                    dropDownValueProducts.id)
+                                                .availableAmount
+                                                .toString()),
                                     validator: (value) {
-                                      return _doubleValidator(value);
+                                      String temp = _doubleValidator(value);
+                                      if (temp != null)
+                                        return _doubleValidator(value);
+                                      if (dropDownValueProducts == null) {
+                                        return 'Select a Product to enter amount';
+                                      }
+                                      if (dropDownValueProducts != null &&
+                                          obj
+                                                  .getProductById(
+                                                      dropDownValueProducts.id)
+                                                  .availableAmount <
+                                              double.parse(value)) {
+                                        return 'Insufficient amount';
+                                      }
+                                      return null;
                                     },
                                     onSaved: (value) {
                                       customerProduct.unitPurchased =
@@ -358,7 +393,7 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                               children: [
                                 ElevatedButton(
                                     onPressed: () {
-                                      _saveCustomerProduct();
+                                      _saveCustomerProduct(obj);
                                     },
                                     child: Text('ADD PRODUCT')),
                               ],
@@ -373,12 +408,6 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                                   TextFormField(
                                     decoration: getInputDesign('paid amount'),
                                     validator: (value) {
-                                      // if (value.isEmpty == false &&
-                                      //     double.parse(value) >
-                                      //         customer.due +
-                                      //             customerProduct.total) {
-                                      //   return 'payment is more than due';
-                                      // }
                                       return _doubleValidator(value);
                                     },
                                     onSaved: (value) {
@@ -390,7 +419,8 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                                   ),
                                   ElevatedButton(
                                       onPressed: () {
-                                        _updateCustomer(customer, customers);
+                                        _updateCustomer(
+                                            customer, customers, obj);
                                       },
                                       child: Text('  DONE  ')),
                                 ],
@@ -404,14 +434,14 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * .05,
                   ),
-                  inputProductsContainer(customer)
+                  inputProductsContainer(customer, obj)
                 ],
               ),
             ),
     );
   }
 
-  Stack inputProductsContainer(Customer customer) {
+  Stack inputProductsContainer(Customer customer, Products obj) {
     final mediaQuery = MediaQuery.of(context);
     double _totalPrice = 0;
     for (int i = 0; i < pickedItems.length; i++) {
@@ -477,7 +507,13 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                                       ElevatedButton(
                                           onPressed: () {
                                             setState(() {
-                                              pickedItems.removeAt(index);
+                                              CustomerProduct temp =
+                                                  pickedItems.removeAt(index);
+                                              obj
+                                                      .getProductByName(
+                                                          temp.productName)
+                                                      .availableAmount +=
+                                                  temp.unitPurchased;
                                             });
                                           },
                                           child: Text('Remove')),

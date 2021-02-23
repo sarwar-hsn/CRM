@@ -70,68 +70,83 @@ class _HomePageState extends State<HomePage> {
         ),
         body: (data.isEmpty)
             ? Center(
-                child: Text('Nothing to Display for ' +
-                    DateFormat('dd-MM-yyyy').format(date)))
-            : Center(
                 child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      color: Colors.white70,
-                      border: Border.all(color: Colors.black12, width: 1)),
-                  height: MediaQuery.of(context).size.height * .8,
-                  width: 600,
-                  child: ListView.builder(
-                      itemCount: data.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Sell Board',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blueAccent),
-                              ),
-                              Text(
-                                'Date : ' +
-                                    DateFormat('dd-MM-yyyy').format(date),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blueAccent),
-                              )
-                            ],
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.blueGrey, Colors.white70])),
+                child: Text('Nothing to Display for ' +
+                    DateFormat('dd-MM-yyyy').format(date)),
+              ))
+            : Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.blueGrey, Colors.white70])),
+                child: Center(
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        color: Colors.white70,
+                        border: Border.all(color: Colors.black12, width: 1)),
+                    height: MediaQuery.of(context).size.height * .8,
+                    width: 600,
+                    child: ListView.builder(
+                        itemCount: data.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Sell Board',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blueAccent),
+                                ),
+                                Text(
+                                  'Date : ' +
+                                      DateFormat('dd-MM-yyyy').format(date),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blueAccent),
+                                )
+                              ],
+                            );
+                          }
+                          index -= 1;
+                          return Container(
+                            height: 50,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Product Name : ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(data[index]['productName']),
+                                    Text(
+                                      ' Amount Sold : ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(double.parse(data[index]['quantity'])
+                                            .toStringAsFixed(2) +
+                                        ' ' +
+                                        data[index]['unitName']),
+                                  ],
+                                )
+                              ],
+                            ),
                           );
-                        }
-                        index -= 1;
-                        return Container(
-                          height: 50,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Product Name : ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(data[index]['productName']),
-                                  Text(
-                                    ' Amount Sold : ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(data[index]['quantity'].toString() +
-                                      ' ' +
-                                      data[index]['unitName']),
-                                ],
-                              )
-                            ],
-                          ),
-                        );
-                      }),
+                        }),
+                  ),
                 ),
               ));
   }

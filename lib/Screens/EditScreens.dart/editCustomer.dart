@@ -245,7 +245,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
                             Container(width: 150, child: Text('Total : ')),
                             Expanded(
                               child: TextFormField(
-                                initialValue: customer.total.toString(),
+                                initialValue: customer.total.toStringAsFixed(2),
                                 decoration: getInputDesign('total amount'),
                                 validator: (value) {
                                   if (value.isEmpty) {
@@ -270,7 +270,7 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
                             Container(width: 150, child: Text('Paid : ')),
                             Expanded(
                               child: TextFormField(
-                                initialValue: customer.paid.toString(),
+                                initialValue: customer.paid.toStringAsFixed(2),
                                 decoration: getInputDesign('paid amount'),
                                 validator: (value) {
                                   if (value.isEmpty) {

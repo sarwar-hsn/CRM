@@ -163,9 +163,12 @@ Container displayStock(BuildContext context, List<Stock> stocks) {
                     Expanded(child: Text(stocks[index].date)),
                     Expanded(child: Text(stocks[index].companyName)),
                     Expanded(child: Text(stocks[index].productName)),
-                    Expanded(child: Text(stocks[index].totalCost.toString())),
-                    Expanded(child: Text(stocks[index].paid.toString())),
-                    Expanded(child: Text(stocks[index].due.toString())),
+                    Expanded(
+                        child:
+                            Text(stocks[index].totalCost.toStringAsFixed(2))),
+                    Expanded(
+                        child: Text(stocks[index].paid.toStringAsFixed(2))),
+                    Expanded(child: Text(stocks[index].due.toStringAsFixed(2))),
                   ],
                 ),
               ),

@@ -69,8 +69,8 @@ class _UpdatePaymentState extends State<UpdatePayment> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      content: Text(
-                                          'new payment : ' + amount.toString()),
+                                      content: Text('new payment : ' +
+                                          amount.toStringAsFixed(2)),
                                       actions: [
                                         ElevatedButton(
                                             onPressed: () {

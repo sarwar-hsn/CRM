@@ -140,11 +140,14 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text('Total : ' +
-                                                  customer.total.toString()),
+                                                  customer.total
+                                                      .toStringAsFixed(2)),
                                               Text('Paid : ' +
-                                                  customer.paid.toString()),
+                                                  customer.paid
+                                                      .toStringAsFixed(2)),
                                               Text('Due : ' +
-                                                  customer.due.toString()),
+                                                  customer.due
+                                                      .toStringAsFixed(2)),
                                             ],
                                           ),
                                         ),

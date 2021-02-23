@@ -148,127 +148,134 @@ class _AddProductsScreenState extends State<AddProductsScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Center(
-              child: Material(
-                elevation: 10,
-                borderRadius: BorderRadius.circular(10),
-                shadowColor: Colors.blueGrey.withOpacity(.2),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.blueGrey.withOpacity(.5)),
-                  alignment: Alignment.topCenter,
-                  height: 550,
-                  width: 500,
-                  child: Form(
-                    key: _form,
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            decoration: BoxDecoration(
-                                color: Colors.white70,
-                                border:
-                                    Border.all(color: Colors.black45, width: 1),
-                                borderRadius: BorderRadius.circular(10)),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                  dropdownColor: Colors.white,
-                                  isExpanded: true,
-                                  value: dropDownValue,
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  hint: Text('Select Category'),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      dropDownValue = newValue;
-                                    });
-                                  },
-                                  items: categories.map((value) {
-                                    return DropdownMenuItem(
-                                      child: Text(value),
-                                      value: value,
-                                    );
-                                  }).toList()),
-                            ),
-                          ),
-                          (categories.isEmpty)
-                              ? ErrorContainer(
-                                  errorContainerHeight: 20,
-                                  errorText:
-                                      'you have no category yet !!! Try adding some categories first',
-                                )
-                              : ErrorContainer(
-                                  errorContainerHeight: errorContainerHeight,
-                                  errorText: 'category is not selected'),
-                          TextFormField(
-                            decoration: getInputDesign('name'),
-                            onSaved: (value) {
-                              temp.name = value;
-                            },
-                            validator: (value) {
-                              if (double.tryParse(value) != null)
-                                return 'Expects unit name';
-                              return null;
-                            },
-                          ),
-                          TextFormField(
-                            decoration: getInputDesign('unit price'),
-                            validator: (value) {
-                              if (double.tryParse(value) == null)
-                                return 'Expects amount in number';
-                              if (double.parse(value) < 0)
-                                return 'number can\'t be less than 0';
-                              return null;
-                            },
-                            onSaved: (value) {
-                              temp.unitPrice = double.parse(value);
-                            },
-                          ),
-                          TextFormField(
-                            decoration: getInputDesign('unit name'),
-                            onSaved: (value) {
-                              temp.unitName = value;
-                            },
-                            validator: (value) {
-                              if (double.tryParse(value) != null)
-                                return 'Expects name';
-                              return null;
-                            },
-                          ),
-                          TextFormField(
-                            decoration: getInputDesign('available amount'),
-                            validator: (value) {
-                              if (double.tryParse(value) == null)
-                                return 'Expects amount in number';
-                              if (double.parse(value) < 0)
-                                return 'number can\'t be less than 0';
-                              return null;
-                            },
-                            onSaved: (value) {
-                              temp.availableAmount = double.parse(value);
-                            },
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              _saveform(products, context);
-                            },
-                            child: Container(
-                              height: 40,
-                              width: 200,
-                              child: Center(
-                                child: Text(
-                                  'SUBMIT',
-                                ),
+          : Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.blueGrey, Colors.white70])),
+              child: Center(
+                child: Material(
+                  elevation: 10,
+                  borderRadius: BorderRadius.circular(10),
+                  shadowColor: Colors.blueGrey.withOpacity(.2),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.blueGrey.withOpacity(.5)),
+                    alignment: Alignment.topCenter,
+                    height: 550,
+                    width: 500,
+                    child: Form(
+                      key: _form,
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.white70,
+                                  border: Border.all(
+                                      color: Colors.black45, width: 1),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                    dropdownColor: Colors.white,
+                                    isExpanded: true,
+                                    value: dropDownValue,
+                                    icon: Icon(Icons.arrow_drop_down),
+                                    hint: Text('Select Category'),
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        dropDownValue = newValue;
+                                      });
+                                    },
+                                    items: categories.map((value) {
+                                      return DropdownMenuItem(
+                                        child: Text(value),
+                                        value: value,
+                                      );
+                                    }).toList()),
                               ),
                             ),
-                          )
-                        ],
+                            (categories.isEmpty)
+                                ? ErrorContainer(
+                                    errorContainerHeight: 20,
+                                    errorText:
+                                        'you have no category yet !!! Try adding some categories first',
+                                  )
+                                : ErrorContainer(
+                                    errorContainerHeight: errorContainerHeight,
+                                    errorText: 'category is not selected'),
+                            TextFormField(
+                              decoration: getInputDesign('name'),
+                              onSaved: (value) {
+                                temp.name = value;
+                              },
+                              validator: (value) {
+                                if (double.tryParse(value) != null)
+                                  return 'Expects unit name';
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              decoration: getInputDesign('unit price'),
+                              validator: (value) {
+                                if (double.tryParse(value) == null)
+                                  return 'Expects amount in number';
+                                if (double.parse(value) < 0)
+                                  return 'number can\'t be less than 0';
+                                return null;
+                              },
+                              onSaved: (value) {
+                                temp.unitPrice = double.parse(value);
+                              },
+                            ),
+                            TextFormField(
+                              decoration: getInputDesign('unit name'),
+                              onSaved: (value) {
+                                temp.unitName = value;
+                              },
+                              validator: (value) {
+                                if (double.tryParse(value) != null)
+                                  return 'Expects name';
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              decoration: getInputDesign('available amount'),
+                              validator: (value) {
+                                if (double.tryParse(value) == null)
+                                  return 'Expects amount in number';
+                                if (double.parse(value) < 0)
+                                  return 'number can\'t be less than 0';
+                                return null;
+                              },
+                              onSaved: (value) {
+                                temp.availableAmount = double.parse(value);
+                              },
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                _saveform(products, context);
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 200,
+                                child: Center(
+                                  child: Text(
+                                    'SUBMIT',
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
