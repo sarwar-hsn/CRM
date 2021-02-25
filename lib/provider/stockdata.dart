@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
+
 import 'package:manage/Model/stock.dart';
 import 'package:http/http.dart' as http;
 
@@ -96,12 +96,12 @@ class StockData with ChangeNotifier {
           body: json.encode({
             'companyName': newStock.companyName,
             'productName': newStock.productName,
-            'totalUnit': newStock.totalUnit,
-            'unitPrice': newStock.unitPrice,
-            'totalCost': newStock.totalCost,
-            'paid': newStock.paid,
-            'due': newStock.due,
-            'extraFee': newStock.extraFee,
+            'totalUnit': double.parse(newStock.totalUnit.toStringAsFixed(2)),
+            'unitPrice': double.parse(newStock.unitPrice.toStringAsFixed(2)),
+            'totalCost': double.parse(newStock.totalCost.toStringAsFixed(2)),
+            'paid': double.parse(newStock.paid.toStringAsFixed(2)),
+            'due': double.parse(newStock.due.toStringAsFixed(2)),
+            'extraFee': double.parse(newStock.extraFee.toStringAsFixed(2)),
             'date': newStock.date,
             'paymentHistory': newStock.paymentHistory,
             'isActive': newStock.isActive,
@@ -122,6 +122,7 @@ class StockData with ChangeNotifier {
     try {
       final url =
           'https://shohel-traders-default-rtdb.firebaseio.com/stocks/${stock.id}.json';
+      // ignore: unused_local_variable
       var response =
           http.patch(url, body: json.encode({'isActive': stock.isActive}));
     } catch (e) {
@@ -135,9 +136,9 @@ class StockData with ChangeNotifier {
           'https://shohel-traders-default-rtdb.firebaseio.com/stocks/${stock.id}.json';
       var response = await http.patch(url,
           body: json.encode({
-            'totalCost': stock.totalCost,
-            'paid': stock.paid,
-            'due': stock.due,
+            'totalCost': double.parse(stock.totalCost.toStringAsFixed(2)),
+            'paid': double.parse(stock.paid.toStringAsFixed(2)),
+            'due': double.parse(stock.due.toStringAsFixed(2)),
             'paymentHistory': stock.paymentHistory,
           }));
       if (response.statusCode != 200) throw response.statusCode;
@@ -155,16 +156,6 @@ class StockData with ChangeNotifier {
     }
     return null;
   }
-
-  // Stock deleteStock(String id) {
-  //   Stock temp = getStockById(id);
-  //   int index = getIndexbyId(id);
-  //   if (index != -1) {
-  //     _stocks.removeAt(index);
-  //   }
-  //   notifyListeners();
-  //   return temp;
-  // }
 
   int getIndexbyId(String id) {
     for (int i = 0; i < _stocks.length; i++) {

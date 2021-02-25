@@ -8,7 +8,6 @@ import 'package:manage/provider/Customers.dart';
 import 'package:manage/provider/products.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:uuid/uuid_util.dart';
 
 import '../../Model/CustomerProduct.dart';
 
@@ -177,6 +176,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
   Container dateContainer(
       BuildContext context, Function function, String text) {
+    // ignore: unused_local_variable
     Customers obj = Provider.of<Customers>(context);
     return Container(
       height: 100,

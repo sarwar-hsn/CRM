@@ -92,9 +92,11 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
   void _saveStock(StockData stocks) {
     if (_form.currentState.validate()) {
       _form.currentState.save();
-      tempStock.totalCost =
-          tempStock.unitPrice * tempStock.totalUnit + tempStock.extraFee;
-      tempStock.due = tempStock.totalCost - tempStock.paid;
+      tempStock.totalCost = double.parse(
+          (tempStock.unitPrice * tempStock.totalUnit + tempStock.extraFee)
+              .toStringAsFixed(2));
+      tempStock.due = double.parse(
+          (tempStock.totalCost - tempStock.paid).toStringAsFixed(2));
       tempStock.companyName = dropDownValue;
 
       tempStock.id = Uuid().v1();
@@ -237,48 +239,50 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              FutureBuilder(
-                                  future: Provider.of<StockData>(context,
-                                          listen: false)
-                                      .fetchAndSetCompanies(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      return Container(
-                                        child: Text(
-                                            'Failed to load your company list'),
-                                      );
-                                    }
-                                    if (snapshot.hasData) {
-                                      companies = snapshot.data as List<String>;
-                                      return Container(
-                                        //container to hold drop down companies
-                                        decoration: _decoration,
-                                        width: 500,
-                                        height: 40,
-                                        padding: EdgeInsets.all(8),
-                                        child: DropdownButtonHideUnderline(
-                                            child: DropdownButton(
-                                          value: dropDownValue,
-                                          hint: Text('select Company'),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              dropDownValue = value;
-                                            });
-                                          },
-                                          items: companies.map((value) {
-                                            return DropdownMenuItem(
-                                              child: Text(value.toString()),
-                                              value: value,
-                                            );
-                                          }).toList(),
-                                        )),
-                                      );
-                                    }
-
-                                    return Container(
-                                      child: CircularProgressIndicator(),
+                              Container(
+                                //container to hold drop down companies
+                                decoration: _decoration,
+                                width: 500,
+                                height: 40,
+                                padding: EdgeInsets.all(8),
+                                child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                  value: dropDownValue,
+                                  hint: Text('select Company'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      dropDownValue = value;
+                                    });
+                                  },
+                                  items: companies.map((value) {
+                                    return DropdownMenuItem(
+                                      child: Text(value.toString()),
+                                      value: value,
                                     );
-                                  }),
+                                  }).toList(),
+                                )),
+                              ),
+                              // FutureBuilder(
+                              //     future: Provider.of<StockData>(context,
+                              //             listen: false)
+                              //         .fetchAndSetCompanies(),
+                              //     builder: (context, snapshot) {
+                              //       if (snapshot.hasError) {
+                              //         return Container(
+                              //           child: Text(
+                              //               'Failed to load your company list'),
+                              //         );
+                              //       }
+                              //       if (snapshot.hasData) {
+                              //         companies = snapshot.data as List<String>;
+
+                              //       }
+
+                              //       return Container(
+                              //         child: CircularProgressIndicator(),
+                              //       );
+                              //     }),
+
                               Container(
                                 // product name in stock
                                 width: 500,
@@ -310,13 +314,16 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                                   onChanged: (value) {
                                     if (_doubleValidator(value) == null) {
                                       tempTotalUnit = double.parse(value);
+                                      tempTotalUnit = double.parse(
+                                          tempTotalUnit.toStringAsFixed(2));
                                     }
                                   },
                                   validator: (value) {
                                     return _doubleValidator(value);
                                   },
                                   onSaved: (value) {
-                                    tempStock.totalUnit = double.parse(value);
+                                    tempStock.totalUnit = double.parse(
+                                        double.parse(value).toStringAsFixed(2));
                                   },
                                 ),
                               ),
@@ -328,14 +335,17 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                                   decoration: getInputDesign('Unit price'),
                                   onChanged: (value) {
                                     if (_doubleValidator(value) == null) {
-                                      tempUnitPrice = double.parse(value);
+                                      tempUnitPrice = double.parse(
+                                          double.parse(value)
+                                              .toStringAsFixed(2));
                                     }
                                   },
                                   validator: (value) {
                                     return _doubleValidator(value);
                                   },
                                   onSaved: (value) {
-                                    tempStock.unitPrice = double.parse(value);
+                                    tempStock.unitPrice = double.parse(
+                                        double.parse(value).toStringAsFixed(2));
                                   },
                                 ),
                               ),
@@ -348,14 +358,17 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                                       'Transportation Fee / Extras'),
                                   onChanged: (value) {
                                     if (_doubleValidator(value) == null) {
-                                      tempExtraFee = double.parse(value);
+                                      tempExtraFee = double.parse(
+                                          double.parse(value)
+                                              .toStringAsFixed(2));
                                     }
                                   },
                                   validator: (value) {
                                     return _doubleValidator(value);
                                   },
                                   onSaved: (value) {
-                                    tempStock.extraFee = double.parse(value);
+                                    tempStock.extraFee = double.parse(
+                                        double.parse(value).toStringAsFixed(2));
                                   },
                                 ),
                               ),
@@ -382,7 +395,7 @@ class _AddToStockScreenState extends State<AddToStockScreen> {
                                           ' + ' +
                                           tempExtraFee.toString() +
                                           ' = ' +
-                                          tempTotal.toString())
+                                          tempTotal.toStringAsFixed(2))
                                     ],
                                   )),
                               Container(

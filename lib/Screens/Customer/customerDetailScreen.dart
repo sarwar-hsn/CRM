@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:manage/Model/Customer.dart';
-import 'package:manage/Model/CustomerProduct.dart';
-import 'package:manage/Model/PurchasedDate.dart';
 import 'package:manage/Screens/EditScreens.dart/editCustomer.dart';
 import 'package:manage/Screens/EditScreens.dart/updatepayment.dart';
 import 'package:manage/Widgets/CustomerProductDetail.dart';

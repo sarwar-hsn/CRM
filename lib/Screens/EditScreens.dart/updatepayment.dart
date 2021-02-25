@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manage/Model/Customer.dart';
 
-import 'package:flutter/material.dart';
 import 'package:manage/provider/Customers.dart';
-import 'package:manage/provider/products.dart';
 import 'package:provider/provider.dart';
 
 class UpdatePayment extends StatefulWidget {
@@ -22,7 +20,6 @@ class _UpdatePaymentState extends State<UpdatePayment> {
   @override
   Widget build(BuildContext context) {
     Customer customer = ModalRoute.of(context).settings.arguments;
-    final obj = Provider.of<Customers>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Payment'),

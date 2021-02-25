@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../Model/Customer.dart';
-import '../../provider/Customers.dart';
+
 import '../Customer/customerDetailScreen.dart';
 
 class SearchByName extends SearchDelegate<String> {
@@ -49,8 +49,6 @@ class SearchByName extends SearchDelegate<String> {
   List<Customer> suggestionList;
   @override
   Widget buildResults(BuildContext context) {
-    String id = getCustomerIdByName(query);
-    Customer customer = getCustomerById(id);
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(

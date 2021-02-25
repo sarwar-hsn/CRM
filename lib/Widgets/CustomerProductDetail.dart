@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:manage/Model/Customer.dart';
 import 'package:manage/Model/CustomerProduct.dart';
 import 'package:manage/Model/PurchasedDate.dart';
-import 'package:intl/intl.dart';
 
 class CustomerProductDetail extends StatelessWidget {
   final mediaQuery;

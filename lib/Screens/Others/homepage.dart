@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import '../../provider/Customers.dart';
 import '../../provider/products.dart';
 import '../../provider/stockdata.dart';
-import '../../provider/stockdata.dart';
 import 'mainDrawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,6 +40,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    super.initState();
+
     isLoading = true;
     Future.delayed(Duration.zero).then((value) {
       try {
@@ -54,7 +55,6 @@ class _HomePageState extends State<HomePage> {
         isLoading = false;
       }
     });
-    super.initState();
   }
 
   @override
@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         appBar: AppBar(
-          title: Text('M/S. Shohel Traders (Beta Version)'),
+          title: Text('Beta Version'),
           centerTitle: true,
         ),
         body: (isLoading)

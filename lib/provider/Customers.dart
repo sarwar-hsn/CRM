@@ -3,12 +3,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:manage/Model/CustomerProduct.dart';
-import 'package:manage/Model/PurchasedDate.dart';
+
 import 'package:manage/Screens/Customer/customerDetailScreen.dart';
 import '../Model/Customer.dart';
-import 'package:uuid/uuid.dart';
-import 'package:uuid/uuid_util.dart';
 import 'package:http/http.dart' as http;
 
 class Customers extends SearchDelegate<String> with ChangeNotifier {
@@ -81,9 +78,9 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
           body: json.encode({
             'name': newCustomer.name,
             'mobile': newCustomer.mobile,
-            'total': newCustomer.total,
-            'paid': newCustomer.paid,
-            'due': newCustomer.due,
+            'total': double.parse(newCustomer.total.toStringAsFixed(2)),
+            'paid': double.parse(newCustomer.paid.toStringAsFixed(2)),
+            'due': double.parse(newCustomer.due.toStringAsFixed(2)),
             'products': newCustomer.products,
             'schedulePay': newCustomer.schedulePay,
             'address': newCustomer.address,
@@ -109,9 +106,9 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
             'name': customer.name,
             'mobile': customer.mobile,
             'address': customer.address,
-            'total': customer.total,
-            'paid': customer.paid,
-            'due': customer.due,
+            'total': double.parse(customer.total.toStringAsFixed(2)),
+            'paid': double.parse(customer.paid.toStringAsFixed(2)),
+            'due': double.parse(customer.due.toStringAsFixed(2)),
             'schedulePay': customer.schedulePay,
           }));
       if (response.statusCode != 200) throw Exception();
@@ -127,8 +124,8 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
           'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
       var response = await http.patch(url,
           body: json.encode({
-            'due': customer.due,
-            'paid': customer.paid,
+            'due': double.parse(customer.due.toStringAsFixed(2)),
+            'paid': double.parse(customer.paid.toStringAsFixed(2)),
             'paymentDate': customer.paymentDate,
           }));
 
@@ -167,9 +164,9 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
           'https://shohel-traders-default-rtdb.firebaseio.com/customers/${customer.id}.json';
       var response = await http.patch(url,
           body: json.encode({
-            'paid': customer.paid,
-            'total': customer.total,
-            'due': customer.due,
+            'paid': double.parse(customer.paid.toStringAsFixed(2)),
+            'total': double.parse(customer.total.toStringAsFixed(2)),
+            'due': double.parse(customer.due.toStringAsFixed(2)),
             'products': customer.products,
             'paymentDate': customer.paymentDate
           }));
@@ -214,8 +211,6 @@ class Customers extends SearchDelegate<String> with ChangeNotifier {
 
   @override
   Widget buildResults(BuildContext context) {
-    String id = getCustomerIdByName(query);
-    Customer customer = getCustomerById(id);
     return Center(
       child: Text('sorry not found'),
     );

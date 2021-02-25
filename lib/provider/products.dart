@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import '../Model/Product.dart';
-import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
@@ -95,9 +94,10 @@ class Products with ChangeNotifier {
       var response = await http.post(url,
           body: json.encode({
             'name': obj.name,
-            'unitPrice': obj.unitPrice,
+            'unitPrice': double.parse(obj.unitPrice.toStringAsFixed(2)),
             'unitName': obj.unitName,
-            'availableAmount': obj.availableAmount,
+            'availableAmount':
+                double.parse(obj.availableAmount.toStringAsFixed(2)),
             'category': obj.category,
           }));
       if (response.statusCode == 200) {
@@ -119,9 +119,10 @@ class Products with ChangeNotifier {
       var response = await http.patch(url,
           body: json.encode({
             'name': product.name,
-            'unitPrice': product.unitPrice,
+            'unitPrice': double.parse(product.unitPrice.toStringAsFixed(2)),
             'unitName': product.unitName,
-            'availableAmount': product.availableAmount,
+            'availableAmount':
+                double.parse(product.availableAmount.toStringAsFixed(2)),
           }));
       if (response.statusCode != 200) throw response.statusCode;
     } catch (e) {

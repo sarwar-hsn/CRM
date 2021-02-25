@@ -224,7 +224,7 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
               child: Row(
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width * .5,
+                    width: MediaQuery.of(context).size.width * .6,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 100, left: 20),
                       child: Form(
@@ -332,7 +332,7 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                                                 .getProductById(
                                                     dropDownValueProducts.id)
                                                 .availableAmount
-                                                .toString()),
+                                                .toStringAsFixed(2)),
                                     validator: (value) {
                                       String temp = _doubleValidator(value);
                                       if (temp != null)
@@ -378,7 +378,7 @@ class _AddCustomerProductScreenState extends State<AddCustomerProductScreen> {
                                         ? getInputDesign('unit price')
                                         : getInputDesign(dropDownValueProducts
                                                 .unitPrice
-                                                .toString() +
+                                                .toStringAsFixed(2) +
                                             ' / ' +
                                             dropDownValueProducts.unitName),
                                   ),

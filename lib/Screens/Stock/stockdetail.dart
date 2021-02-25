@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:manage/Model/stock.dart';
-import 'package:manage/Screens/Others/mainDrawer.dart';
 
 import 'package:manage/Screens/Stock/updatestockpayment.dart';
 import 'package:manage/provider/stockdata.dart';

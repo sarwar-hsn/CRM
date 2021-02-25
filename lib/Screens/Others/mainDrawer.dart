@@ -2,7 +2,6 @@ import 'package:manage/Screens/Customer/addcustomer.dart';
 import 'package:manage/Screens/Customer/customersScreen.dart';
 import 'package:manage/Screens/Others/dailycheck.dart';
 import 'package:manage/Screens/Others/transaction.dart';
-import 'package:manage/Screens/Product/ProductsScreen.dart';
 import 'package:manage/Screens/Product/addCategories.dart';
 import 'package:manage/Screens/Product/addProductsScreen.dart';
 
