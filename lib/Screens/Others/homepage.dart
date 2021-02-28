@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         appBar: AppBar(
-          title: Text('Beta Version'),
+          title: Text('M/S Shohel Trader\'s'),
           centerTitle: true,
         ),
         body: (isLoading)

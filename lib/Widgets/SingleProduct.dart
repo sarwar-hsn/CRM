@@ -7,8 +7,31 @@ import 'package:provider/provider.dart';
 class SingleProduct extends StatelessWidget {
   final Product product;
   SingleProduct({this.product});
-  _deleteHandler(Products obj) {
-    obj.deleteProduct(id: product.id);
+  _deleteHandler(Products obj, BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Are you sure to delete this product ?'),
+            actions: [
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text('Confirm')),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: Text('Cancel'))
+            ],
+          );
+        }).then((value) {
+      if (value) {
+        obj.deleteProduct(id: product.id);
+      }
+    });
   }
 
   @override
@@ -45,7 +68,7 @@ class SingleProduct extends StatelessWidget {
                   IconButton(
                     tooltip: 'Delete this Product',
                     onPressed: () {
-                      _deleteHandler(obj);
+                      _deleteHandler(obj, context);
                     },
                     icon: Icon(Icons.delete),
                     color: Colors.white,

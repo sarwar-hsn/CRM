@@ -73,7 +73,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
               ),
             )
           : GridView.builder(
-              itemCount: 7,
+              itemCount: 2,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 1, mainAxisExtent: 500),
               itemBuilder: (context, index) {
